@@ -1,6 +1,7 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
+import { Calendar } from "@/components/ui/calendar"
 import {
   Field,
   FieldContent,
@@ -10,6 +11,11 @@ import {
   FieldLabel,
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
 import {
   Select,
   SelectContent,
@@ -24,7 +30,7 @@ import {
   updateApplicationSchema,
 } from "@/schemas/job-application"
 import { jobApplicationService } from "@/services/job-application-service"
-import { Stage, Status, WorkMode } from "@/types/enums"
+import { WorkMode } from "@/types/enums"
 import {
   stageOptions,
   statusOptions,
@@ -33,6 +39,8 @@ import {
 import { JobApplication } from "@/types/job-application.types"
 import { useAuth } from "@clerk/nextjs"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { format } from "date-fns"
+import { CalendarIcon } from "lucide-react"
 import { useState } from "react"
 import { Controller, useForm } from "react-hook-form"
 
@@ -47,6 +55,7 @@ const UpdateApplicationForm = ({
 }: UpdateApplicationFormProps) => {
   const { getToken } = useAuth()
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isDatePickerOpen, setIsDatePickerOpen] = useState(false)
 
   async function onSubmit(values: UpdateapplicationFormValues) {
     setIsSubmitting(true)
@@ -62,8 +71,8 @@ const UpdateApplicationForm = ({
           applicationSource: values.applicationSource,
           mode: Number(values.mode) as WorkMode,
           notes: values.notes || undefined,
-          stage: Stage.Applied,
-          status: Status.Active,
+          stage: values.stage,
+          status: values.status,
           dateApplied: values.dateApplied
             ? new Date(values.dateApplied)
             : new Date(),
@@ -104,8 +113,8 @@ const UpdateApplicationForm = ({
       stage: application.stage,
       status: application.status,
       dateApplied: application.dateApplied
-        ? new Date(application.dateApplied).toISOString().split("T")[0]
-        : "",
+        ? new Date(application.dateApplied)
+        : new Date(),
       notes: application.notes ?? "",
     },
   })
@@ -298,18 +307,51 @@ const UpdateApplicationForm = ({
         <Controller
           name="dateApplied"
           control={form.control}
-          render={({ field, fieldState }) => (
-            <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor={field.name}>Fecha de aplicación</FieldLabel>
-              <Input
-                {...field}
-                id={field.name}
-                type="date"
-                aria-invalid={fieldState.invalid}
-              />
-              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-            </Field>
-          )}
+          render={({ field, fieldState }) => {
+            const selectDate = field.value ? new Date(field.value) : undefined
+            return (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel htmlFor={field.name}>
+                  Fecha de aplicación
+                </FieldLabel>
+
+                <Popover
+                  open={isDatePickerOpen}
+                  onOpenChange={setIsDatePickerOpen}
+                >
+                  <PopoverTrigger
+                    render={
+                      <Button
+                        variant="outline"
+                        data-empty={!selectDate}
+                        className="w-full justify-start text-left font-normal"
+                      >
+                        <CalendarIcon />
+                        {selectDate ? (
+                          format(selectDate, "PPP")
+                        ) : (
+                          <span>Pick a date</span>
+                        )}
+                      </Button>
+                    }
+                  />
+                  <PopoverContent>
+                    <Calendar
+                      mode="single"
+                      selected={selectDate}
+                      onSelect={(date) => {
+                        field.onChange(date ? new Date(date) : "")
+                        setIsDatePickerOpen(false)
+                      }}
+                    />
+                  </PopoverContent>
+                </Popover>
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )
+          }}
         />
 
         <Controller

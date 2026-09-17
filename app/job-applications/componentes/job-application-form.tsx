@@ -30,6 +30,14 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { workModeOptions } from "@/types/enums-options"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
+import { CalendarIcon } from "lucide-react"
+import { Calendar } from "@/components/ui/calendar"
+import { format } from "date-fns"
 
 interface JobApplicationFormProps {
   onSuccess?: () => void
@@ -38,6 +46,7 @@ interface JobApplicationFormProps {
 const JobApplicationForm = ({ onSuccess }: JobApplicationFormProps) => {
   const { getToken } = useAuth()
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isDatePickerOpen, setIsDatePickerOpen] = useState(false)
 
   const form = useForm<JobApplicationFormValues>({
     resolver: zodResolver(jobApplicationSchema),
@@ -209,18 +218,51 @@ const JobApplicationForm = ({ onSuccess }: JobApplicationFormProps) => {
         <Controller
           name="dateApplied"
           control={form.control}
-          render={({ field, fieldState }) => (
-            <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor={field.name}>Fecha de aplicación</FieldLabel>
-              <Input
-                {...field}
-                id={field.name}
-                type="date"
-                aria-invalid={fieldState.invalid}
-              />
-              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-            </Field>
-          )}
+          render={({ field, fieldState }) => {
+            const selectDate = field.value ? new Date(field.value) : undefined
+            return (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel htmlFor={field.name}>
+                  Fecha de aplicación
+                </FieldLabel>
+
+                <Popover
+                  open={isDatePickerOpen}
+                  onOpenChange={setIsDatePickerOpen}
+                >
+                  <PopoverTrigger
+                    render={
+                      <Button
+                        variant="outline"
+                        data-empty={!selectDate}
+                        className="w-full justify-start text-left font-normal"
+                      >
+                        <CalendarIcon />
+                        {selectDate ? (
+                          format(selectDate, "PPP")
+                        ) : (
+                          <span>Pick a date</span>
+                        )}
+                      </Button>
+                    }
+                  />
+                  <PopoverContent>
+                    <Calendar
+                      mode="single"
+                      selected={selectDate}
+                      onSelect={(date) => {
+                        field.onChange(date ? new Date(date) : "")
+                        setIsDatePickerOpen(false)
+                      }}
+                    />
+                  </PopoverContent>
+                </Popover>
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )
+          }}
         />
 
         <Controller

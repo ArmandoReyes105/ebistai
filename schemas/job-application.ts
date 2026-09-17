@@ -21,7 +21,7 @@ export const jobApplicationSchema = z.object({
     mode: z
       .enum(WorkMode, "Selecciona una modalidad"),
     dateApplied: z
-      .string()
+      .date()
       .optional()
       .or(z.literal("")),
     notes: z
