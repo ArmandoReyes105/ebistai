@@ -12,9 +12,9 @@ import { JobApplication } from "@/types/job-application.types"
 
 interface DeleteApplicationDialogProps {
   open: boolean
-  application: JobApplication | null
+  application: JobApplication
   onOpenChange: (open: boolean) => void
-  onConfirm: () => void
+  onConfirm: (id: string) => void
 }
 
 const DeleteApplicationDialog = ({
@@ -41,7 +41,10 @@ const DeleteApplicationDialog = ({
           <AlertDialogCancel>Cancelar</AlertDialogCancel>
           <AlertDialogAction
             variant={"destructive"}
-            onClick={() => onConfirm()}
+            onClick={() => {
+              onConfirm(application.id)
+              onOpenChange(false)
+            }}
           >
             Eliminar
           </AlertDialogAction>
