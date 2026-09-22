@@ -107,7 +107,9 @@ const UpdateApplicationForm = ({
     defaultValues: {
       jobTitle: application.jobTitle,
       company: application.company,
-      jobPostingUrl: application.jobPostingUrl,
+      jobPostingUrl: application.jobPostingUrl
+        ? application.jobPostingUrl
+        : undefined,
       applicationSource: application.applicationSource,
       mode: application.mode,
       stage: application.stage,
