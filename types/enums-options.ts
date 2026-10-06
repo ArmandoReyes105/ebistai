@@ -17,6 +17,7 @@ export const statusOptions: EnumOption<Status>[] = [
     { value: Status.Withdrawn, label: "Retirado" },
     { value: Status.OfferAccepted, label: "Oferta Aceptada" },
     { value: Status.Rejected, label: "Rechazado" },
+    { value: Status.Ignored, label: "Ignorado" },
 ]
 
 export const workModeOptions: EnumOption<WorkMode>[] = [

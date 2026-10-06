@@ -22,6 +22,7 @@ export function StatusBadge<T extends number>({
 
   return (
     <Badge variant="secondary" className={badgeConfig.className}>
+      <div className="mr-2 h-1.25 w-1.25 bg-current" />
       {badgeConfig.label}
     </Badge>
   )

@@ -5,10 +5,11 @@ import {
   ProgressValue,
 } from "@/components/ui/progress"
 import { Separator } from "@/components/ui/separator"
+import { Stage } from "@/types/enums"
 
 interface ApplicationStageOverviewProps {
   totalApplications: number
-  byStage: Record<string, number>
+  byStage: Record<keyof typeof Stage, number>
 }
 
 const ApplicationStageOverview = ({
@@ -16,28 +17,45 @@ const ApplicationStageOverview = ({
   byStage,
 }: ApplicationStageOverviewProps) => {
   return (
-    <Card className="p-2">
+    <Card>
       <CardHeader>
         <CardTitle>Embudo de Conversión</CardTitle>
       </CardHeader>
       <Separator />
       <CardContent>
         <div className="flex flex-col gap-4">
-          <Progress value={(totalApplications / totalApplications) * 100}>
+          <Progress
+            value={100}
+            className="**:data-[slot=progress-indicator]:bg-amber-400"
+          >
             <ProgressLabel>
               1. Total de postulaciones: {totalApplications}
             </ProgressLabel>
             <ProgressValue />
           </Progress>
 
-          <Progress value={(byStage["Applied"] / totalApplications) * 100}>
+          <Progress
+            value={
+              totalApplications > 0
+                ? (byStage["Applied"] / totalApplications) * 100
+                : 0
+            }
+            className="**:data-[slot=progress-indicator]:bg-violet-400"
+          >
             <ProgressLabel>
               2. En postulación: {byStage["Applied"]}
             </ProgressLabel>
             <ProgressValue />
           </Progress>
 
-          <Progress value={(byStage["Interview"] / totalApplications) * 100}>
+          <Progress
+            value={
+              totalApplications > 0
+                ? (byStage["Interview"] / totalApplications) * 100
+                : 0
+            }
+            className="**:data-[slot=progress-indicator]:bg-blue-400"
+          >
             <ProgressLabel>
               3. En Entrevista: {byStage["Interview"]}
             </ProgressLabel>
@@ -45,7 +63,12 @@ const ApplicationStageOverview = ({
           </Progress>
 
           <Progress
-            value={(byStage["TechnicalInterview"] / totalApplications) * 100}
+            value={
+              totalApplications > 0
+                ? (byStage["TechnicalInterview"] / totalApplications) * 100
+                : 0
+            }
+            className="**:data-[slot=progress-indicator]:bg-indigo-400"
           >
             <ProgressLabel>
               4. En Entrevista Técnica: {byStage["TechnicalInterview"]}
@@ -53,7 +76,14 @@ const ApplicationStageOverview = ({
             <ProgressValue />
           </Progress>
 
-          <Progress value={(byStage["Offer"] / totalApplications) * 100}>
+          <Progress
+            value={
+              totalApplications > 0
+                ? (byStage["Offer"] / totalApplications) * 100
+                : 0
+            }
+            className="**:data-[slot=progress-indicator]:bg-green-400"
+          >
             <ProgressLabel>5. Ofertas: {byStage["Offer"]}</ProgressLabel>
             <ProgressValue />
           </Progress>

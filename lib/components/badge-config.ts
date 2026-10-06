@@ -28,13 +28,19 @@ export const statusBadgeConfig: Record<Status, BadgeConfig> = {
     className:
       "bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300",
   },
+
+  [Status.Ignored]: {
+    label: "Ignorada",
+    className:
+      "bg-teal-100 text-teal-700 dark:bg-teal-950/60 dark:text-teal-300",
+  },
 }
 
 export const stageBadgeConfig: Record<Stage, BadgeConfig> = {
   [Stage.Applied]: {
-    label: "Postulación",
+    label: "Aplicada",
     className:
-      "bg-violet-100 text-violet-700 dark:bg-violet-950/60 dark:text-violet-300",
+      "bg-blue-100 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300",
   },
 
   [Stage.Interview]: {

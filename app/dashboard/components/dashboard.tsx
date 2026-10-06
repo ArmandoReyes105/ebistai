@@ -6,6 +6,8 @@ import { DashboardStats } from "@/types/stats.types"
 import { useAuth } from "@clerk/nextjs"
 import { useEffect, useState } from "react"
 import ApplicationStageOverview from "./application-stage-overview"
+import RecentApplicationsList from "./recent-applications-list"
+import StatsCards from "./stats-cards"
 
 const Dashboard = () => {
   const { getToken } = useAuth()
@@ -45,14 +47,34 @@ const Dashboard = () => {
   return (
     <>
       {isLoading ? (
-        <p>Cargando ...</p>
+        <p className="text-sm text-muted-foreground">
+          Preparando tu resumen ...
+        </p>
       ) : data ? (
-        <ApplicationStageOverview
-          totalApplications={data.totalApplications}
-          byStage={data.byStage}
-        />
+        <>
+          <span className="mb-4 block text-sm text-muted-foreground">
+            Tienes {data.totalApplications} procesos abiertos;{" "}
+            {data.byStage["Interview"]} estan en etapa de entrevista
+          </span>
+
+          <StatsCards
+            totalApplications={data.totalApplications}
+            byStage={data.byStage}
+          />
+
+          <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-2">
+            <RecentApplicationsList applications={data.recentApplications} />
+
+            <ApplicationStageOverview
+              totalApplications={data.totalApplications}
+              byStage={data.byStage}
+            />
+          </div>
+        </>
       ) : (
-        <p>Cargando</p>
+        <p className="text-sm text-muted-foreground">
+          Preparando tu resumen ...
+        </p>
       )}
     </>
   )

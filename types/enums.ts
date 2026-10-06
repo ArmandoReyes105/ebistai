@@ -10,6 +10,7 @@ export enum Status {
   Rejected = 2,
   Withdrawn = 3,
   OfferAccepted = 4,
+  Ignored = 5,
 }
 
 export enum WorkMode {
