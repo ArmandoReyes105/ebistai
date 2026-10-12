@@ -20,6 +20,7 @@ import { Fragment } from "react"
 
 interface AntiGhostingRadarProps {
   radarApplications: JobApplication[]
+  radarGhostingThresholdDays: number
   onMarkAsIgnored: (id: string) => Promise<void>
 }
 
@@ -30,6 +31,7 @@ const getDaysSince = (date: Date): number =>
 
 const AntiGhostingRadar = ({
   radarApplications,
+  radarGhostingThresholdDays,
   onMarkAsIgnored,
 }: AntiGhostingRadarProps) => {
   return (
@@ -57,7 +59,7 @@ const AntiGhostingRadar = ({
         <CardAction>
           <div className="flex flex-row items-center gap-2 text-muted-foreground">
             <SlidersHorizontal className="h-4 w-4" />
-            <span>Umbral: 30 días</span>
+            <span>Umbral: {radarGhostingThresholdDays} días</span>
           </div>
         </CardAction>
       </CardHeader>

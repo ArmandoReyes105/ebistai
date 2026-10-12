@@ -29,6 +29,7 @@ const Dashboard = () => {
 
       <AntiGhostingRadar
         radarApplications={data.antiGhostingRadar}
+        radarGhostingThresholdDays={data.radarGhostingThresholdDays}
         onMarkAsIgnored={markAsIgnored}
       />
 

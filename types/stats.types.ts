@@ -6,4 +6,5 @@ export interface DashboardStats {
     byStage: Record<keyof typeof Stage, number>
     recentApplications: JobApplication[],
     antiGhostingRadar: JobApplication[],
+    radarGhostingThresholdDays: number,
 }
