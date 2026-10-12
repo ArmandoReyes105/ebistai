@@ -10,7 +10,7 @@ const DashboardPage = async () => {
   const user = await currentUser()
   if (!user) {
     return (
-      <div className="mx-auto max-w-7xl px-8 py-4">
+      <div className="mx-auto w-full max-w-7xl px-8 py-4">
         <p className="text-sm text-muted-foreground">
           No pudimos cargar tu información. Por favor, recargá la página.
         </p>
@@ -19,7 +19,7 @@ const DashboardPage = async () => {
   }
 
   return (
-    <div className="mx-auto max-w-7xl px-8 py-4">
+    <div className="mx-auto w-full max-w-7xl px-8 py-4">
       <div className="flex flex-row justify-between">
         <h1 className="text-2xl font-bold">Hola, {user.firstName}</h1>
 

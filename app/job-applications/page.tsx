@@ -5,7 +5,7 @@ const JobApplicationsPage = async () => {
   await auth.protect()
 
   return (
-    <div className="mx-auto max-w-7xl">
+    <div className="mx-auto w-full max-w-7xl px-8 py-4">
       <JobApplicationList />
     </div>
   )

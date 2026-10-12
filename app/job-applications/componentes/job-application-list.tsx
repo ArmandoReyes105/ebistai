@@ -24,8 +24,14 @@ const JobApplicationList = () => {
 
   return (
     <div>
-      <div className="flex justify-between">
-        <h1 className="mb-4 text-2xl font-bold">Mis solicitudes de trabajo</h1>
+      <div className="mb-4 flex items-center justify-between">
+        <div className="flex flex-col">
+          <h1 className="text-2xl font-bold">Mis solicitudes de trabajo</h1>
+          <span className="text-sm text-muted-foreground">
+            Registra cada vacante, filtra tus procesos y mantén su estado al
+            día.
+          </span>
+        </div>
         <JobApplicationDialog onCreated={fetchJobApplications} />
       </div>
 
