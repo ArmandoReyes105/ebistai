@@ -49,9 +49,9 @@ const RadarSettingsPanel = ({
             Días sin noticias para sugerir «Ignorada»
           </span>
           <p className="text-xs/relaxed text-muted-foreground">
-            El radar revisa las postulaciones en Aplicada y En proceso y cuenta
-            los días desde su última actualización. Nunca cambia el estado sin
-            tu confirmación.
+            El radar revisa tus postulaciones en etapa Aplicada y cuenta los
+            días desde la fecha en que te postulaste. Nunca cambia el estado
+            sin tu confirmación.
           </p>
         </div>
 

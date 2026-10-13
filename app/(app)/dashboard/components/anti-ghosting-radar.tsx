@@ -51,8 +51,8 @@ const AntiGhostingRadar = ({
             <CardDescription>
               {radarApplications.length}{" "}
               {radarApplications.length !== 1
-                ? "postulaciones llevan 30 días o más sin noticias."
-                : "postulación lleva 30 días o más sin noticias."}
+                ? `postulaciones llevan ${radarGhostingThresholdDays} días o más sin noticias.`
+                : `postulación lleva ${radarGhostingThresholdDays} días o más sin noticias.`}
             </CardDescription>
           </div>
         </div>
