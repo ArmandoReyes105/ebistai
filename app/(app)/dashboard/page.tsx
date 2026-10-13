@@ -1,5 +1,5 @@
 import { auth, currentUser } from "@clerk/nextjs/server"
-import JobApplicationDialog from "../job-applications/componentes/job-application-dialog"
+import JobApplicationDialog from "@/app/(app)/job-applications/componentes/job-application-dialog"
 import Dashboard from "./components/dashboard"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
