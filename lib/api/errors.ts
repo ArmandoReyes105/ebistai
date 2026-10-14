@@ -7,4 +7,10 @@ export class ApiError extends Error {
     super(`API Error: ${status}: ${statusText}`)
     this.name = "ApiError"
   }
+
+  // Machine-readable code from a ProblemDetails body (e.g. "stage_unchanged").
+  get code(): string | undefined {
+    const body = this.body as { code?: unknown } | null | undefined
+    return typeof body?.code === "string" ? body.code : undefined
+  }
 }

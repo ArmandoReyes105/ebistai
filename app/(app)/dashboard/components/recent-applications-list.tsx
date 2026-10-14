@@ -1,10 +1,7 @@
 import { StatusBadge } from "@/components/status-badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
-import {
-  stageBadgeConfig,
-  statusBadgeConfig,
-} from "@/lib/components/badge-config"
+import { stageBadgeConfig } from "@/lib/components/badge-config"
 import { JobApplication } from "@/types/job-application.types"
 import { ArrowRight } from "lucide-react"
 import Link from "next/link"

@@ -1,4 +1,4 @@
-import { Stage, Status, WorkMode } from "./enums";
+import { Actor, ApplicationEventField, Stage, Status, WorkMode } from "./enums";
 
 export interface JobApplication {
     id: string;
@@ -11,6 +11,7 @@ export interface JobApplication {
     mode: WorkMode;
     notes: string;
     dateApplied: Date;
+    lastProgressAt?: Date;
 }
 
 export interface CreateJobApplicationRequest {
@@ -23,22 +24,50 @@ export interface CreateJobApplicationRequest {
     dateApplied?: Date;
 }
 
+// Stage and status are changed through their own endpoints, not via PUT.
 export interface UpdateJobApplicationRequest {
     jobTitle: string;
     company: string;
     jobPostingUrl?: string;
     applicationSource: string;
     mode: WorkMode;
-    status: Status;
-    stage: Stage;
     notes?: string;
     dateApplied?: Date;
 }
 
-export interface UpdateStageRequest {
+// `occurredAt` is optional: the server uses "now" when omitted.
+export interface ChangeStageRequest {
     stage: Stage;
+    occurredAt?: Date | string;
 }
 
-export interface UpdateStatusRequest {
+export interface ChangeStatusRequest {
     status: Status;
+    occurredAt?: Date | string;
+}
+
+export interface ReviveRequest {
+    occurredAt?: Date | string;
+}
+
+export interface UpdateEventDateRequest {
+    occurredAt: Date | string;
+}
+
+export interface ApplicationActionResponse {
+    application: JobApplication;
+    eventId: string;
+}
+
+export interface ApplicationEvent {
+    id: string;
+    sequence: number;
+    field: ApplicationEventField;
+    // Null on the initial event. Holds a Stage or Status value depending on `field`.
+    fromValue: number | null;
+    toValue: number;
+    occurredAt: string;
+    recordedAt: string;
+    actor: Actor;
+    canUndo: boolean;
 }

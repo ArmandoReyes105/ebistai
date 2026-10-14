@@ -12,13 +12,13 @@ const STEPS = [
     icon: Route,
     title: "Muévela por etapas",
     description:
-      "Cuando te respondan, pásala a Entrevista, Técnica u Oferta. Si no sigue, márcala como Rechazada o Retirada.",
+      "Cuando te respondan, pásala a Entrevista, Prueba técnica, Entrevista técnica u Oferta. Si no sigue, márcala como Rechazada o Retirada.",
   },
   {
     icon: Radar,
     title: "Deja que el radar vigile",
     description:
-      "Elige cuántos días son demasiados sin noticias y te muestro las que llevan ese tiempo en Aplicada.",
+      "Elige cuántos días son demasiados sin noticias y te muestro las que llevan ese tiempo sin avanzar de etapa.",
   },
 ]
 

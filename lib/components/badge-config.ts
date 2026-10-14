@@ -24,7 +24,7 @@ export const statusBadgeConfig: Record<Status, BadgeConfig> = {
   },
 
   [Status.OfferAccepted]: {
-    label: "Aceptada",
+    label: "Oferta aceptada",
     className:
       "bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300",
   },
@@ -33,6 +33,18 @@ export const statusBadgeConfig: Record<Status, BadgeConfig> = {
     label: "Ignorada",
     className:
       "bg-teal-100 text-teal-700 dark:bg-teal-950/60 dark:text-teal-300",
+  },
+
+  [Status.OfferDeclined]: {
+    label: "Oferta rechazada",
+    className:
+      "bg-orange-100 text-orange-700 dark:bg-orange-950/60 dark:text-orange-300",
+  },
+
+  [Status.PositionClosed]: {
+    label: "Vacante cerrada",
+    className:
+      "bg-slate-100 text-slate-700 dark:bg-slate-800/70 dark:text-slate-300",
   },
 }
 
@@ -49,8 +61,14 @@ export const stageBadgeConfig: Record<Stage, BadgeConfig> = {
       "bg-amber-100 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300",
   },
 
+  [Stage.Assessment]: {
+    label: "Prueba técnica",
+    className:
+      "bg-violet-100 text-violet-700 dark:bg-violet-950/60 dark:text-violet-300",
+  },
+
   [Stage.TechnicalInterview]: {
-    label: "Prueba Técnica",
+    label: "Entrevista técnica",
     className:
       "bg-orange-100 text-orange-700 dark:bg-orange-950/60 dark:text-orange-300",
   },

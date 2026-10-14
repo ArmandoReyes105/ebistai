@@ -2,10 +2,10 @@
 
 import { toast } from "@/components/ui/toast"
 import { jobApplicationService } from "@/services/job-application-service"
-import { Stage, Status } from "@/types/enums"
 import { JobApplication } from "@/types/job-application.types"
 import { useAuth } from "@clerk/nextjs"
 import { useCallback, useEffect, useState } from "react"
+import { useApplicationActions } from "./use-application-actions"
 
 export function useJobApplications() {
   const { getToken } = useAuth()
@@ -34,6 +34,30 @@ export function useJobApplications() {
     }
   }, [getToken])
 
+  // Silent refresh: keeps the table on screen instead of flashing the loader.
+  const refreshJobApplications = useCallback(async () => {
+    try {
+      const token = await getToken()
+      const response = await jobApplicationService.getAll({
+        token: token ?? undefined,
+      })
+      setJobApplications(response)
+    } catch (error) {
+      console.error(error)
+    }
+  }, [getToken])
+
+  const replaceApplication = useCallback((updated: JobApplication) => {
+    setJobApplications((prev) =>
+      prev.map((app) => (app.id === updated.id ? updated : app))
+    )
+  }, [])
+
+  const { changeStage, changeStatus, revive } = useApplicationActions({
+    onApplicationChange: replaceApplication,
+    onStale: refreshJobApplications,
+  })
+
   const deleteApplication = async (id: string) => {
     const token = await getToken()
     const previous = jobApplications
@@ -58,59 +82,17 @@ export function useJobApplications() {
     }
   }
 
-  const updateStatus = async (id: string, status: Status) => {
-    const token = await getToken()
-    const previous = jobApplications
-
-    setJobApplications((prev) =>
-      prev.map((app) => (app.id === id ? { ...app, status: status } : app))
-    )
-
-    try {
-      await jobApplicationService.updateStatus(
-        id,
-        { status: status },
-        { token: token ?? undefined }
-      )
-    } catch (error) {
-      setJobApplications(previous)
-      toast.add({
-        title: "Error",
-        description: "No se pudo actualizar el estado. Inténtalo de nuevo.",
-        type: "error",
-      })
-      console.error(error)
-    }
-  }
-
-  const updateStage = async (id: string, newStage: Stage) => {
-    const token = await getToken()
-    const previous = jobApplications
-
-    setJobApplications((prev) =>
-      prev.map((app) => (app.id === id ? { ...app, stage: newStage } : app))
-    )
-
-    try {
-      await jobApplicationService.updateStage(
-        id,
-        { stage: newStage },
-        { token: token ?? undefined }
-      )
-    } catch (error) {
-      setJobApplications(previous)
-      toast.add({
-        title: "Error",
-        description: "No se pudo actualizar la etapa. Inténtalo de nuevo.",
-        type: "error",
-      })
-      console.error(error)
-    }
-  }
-
   useEffect(() => {
     void Promise.resolve().then(fetchJobApplications)
   }, [fetchJobApplications])
 
-  return { jobApplications, isLoading, fetchJobApplications, deleteApplication, updateStatus, updateStage}
+  return {
+    jobApplications,
+    isLoading,
+    fetchJobApplications,
+    deleteApplication,
+    changeStage,
+    changeStatus,
+    revive,
+  }
 }

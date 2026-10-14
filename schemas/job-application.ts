@@ -1,4 +1,4 @@
-import { Stage, Status, WorkMode } from "@/types/enums";
+import { WorkMode } from "@/types/enums";
 import z from "zod";
 
 export const jobApplicationSchema = z.object({
@@ -11,7 +11,10 @@ export const jobApplicationSchema = z.object({
       .min(2, "La compañia debe tener al menos 2 caracteres")
       .max(200, "El nombre de la compañia es demasiado largo"),
     jobPostingUrl: z
-      .url("Ingrese una URL válida")
+      .url({
+        protocol: /^https?$/,
+        error: "Ingrese una URL válida (http o https)",
+      })
       .optional()
       .or(z.literal("")),
     applicationSource: z
@@ -31,12 +34,8 @@ export const jobApplicationSchema = z.object({
       .or(z.literal("")),
 });
 
-export const updateApplicationSchema = jobApplicationSchema.extend({
-  status: z
-    .enum(Status, "Selecciona el estado de tu postulación"),
-  stage: z
-    .enum(Stage, "Selecciona una etapa")
-})
+// Stage and status are no longer editable here; they have their own actions.
+export const updateApplicationSchema = jobApplicationSchema
 
 export type JobApplicationFormValues = z.infer<typeof jobApplicationSchema>
 

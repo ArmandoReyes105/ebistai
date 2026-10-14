@@ -6,9 +6,9 @@ const THRESHOLDS = [14, 21, 25, 30, 45]
 
 const POINTS = [
   "Tú eliges cuántos días son demasiados sin noticias.",
-  "Marco las postulaciones en etapa Aplicada que se quedaron en silencio.",
+  "Reviso tus postulaciones activas en cualquier etapa, menos Oferta, y marco las que se quedaron en silencio.",
   "Si quieres, las pasa a Ignorada, pero antes te muestro cuántas se van a afectar y tú confirmas.",
-  "Si cambias de opinión, puedes regresar una Ignorada a otra etapa a mano.",
+  "Si cambias de opinión, puedes revivir una Ignorada con un clic.",
 ]
 
 const RadarSection = () => {
@@ -25,8 +25,8 @@ const RadarSection = () => {
           Yo me fijo en quién no te ha respondido
         </h2>
         <p className="text-base text-pretty text-muted-foreground">
-          Cuento los días desde que te postulaste y te muestro las vacantes que
-          pasaron tu umbral. Así decides con calma si das seguimiento o sigues
+          Cuento los días desde tu último avance, o sea, desde el último cambio
+          de etapa, y te muestro las vacantes que pasaron tu umbral. Así decides con calma si das seguimiento o sigues
           adelante.
         </p>
         <div className="flex flex-col gap-3">

@@ -31,11 +31,7 @@ import {
 } from "@/schemas/job-application"
 import { jobApplicationService } from "@/services/job-application-service"
 import { WorkMode } from "@/types/enums"
-import {
-  stageOptions,
-  statusOptions,
-  workModeOptions,
-} from "@/types/enums-options"
+import { workModeOptions } from "@/types/enums-options"
 import { JobApplication } from "@/types/job-application.types"
 import { useAuth } from "@clerk/nextjs"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -71,8 +67,6 @@ const UpdateApplicationForm = ({
           applicationSource: values.applicationSource,
           mode: Number(values.mode) as WorkMode,
           notes: values.notes || undefined,
-          stage: values.stage,
-          status: values.status,
           dateApplied: values.dateApplied
             ? new Date(values.dateApplied)
             : new Date(),
@@ -112,8 +106,6 @@ const UpdateApplicationForm = ({
         : undefined,
       applicationSource: application.applicationSource,
       mode: application.mode,
-      stage: application.stage,
-      status: application.status,
       dateApplied: application.dateApplied
         ? new Date(application.dateApplied)
         : new Date(),
@@ -224,78 +216,6 @@ const UpdateApplicationForm = ({
                 </SelectTrigger>
                 <SelectContent>
                   {workModeOptions.map((item) => (
-                    <SelectItem key={item.label} value={item.value}>
-                      {item.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </Field>
-          )}
-        />
-
-        <Controller
-          name="stage"
-          control={form.control}
-          render={({ field, fieldState }) => (
-            <Field orientation="responsive" data-invalid={fieldState.invalid}>
-              <FieldContent>
-                <FieldLabel htmlFor="job-application-stage">Etapa</FieldLabel>
-                {fieldState.invalid && (
-                  <FieldError errors={[fieldState.error]} />
-                )}
-              </FieldContent>
-              <Select
-                items={stageOptions}
-                name={field.name}
-                value={field.value}
-                onValueChange={field.onChange}
-              >
-                <SelectTrigger
-                  id="job-application-mode"
-                  aria-invalid={fieldState.invalid}
-                  className="min-w-40"
-                >
-                  <SelectValue placeholder="Selecciona una modalidad" />
-                </SelectTrigger>
-                <SelectContent>
-                  {stageOptions.map((item) => (
-                    <SelectItem key={item.label} value={item.value}>
-                      {item.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </Field>
-          )}
-        />
-
-        <Controller
-          name="status"
-          control={form.control}
-          render={({ field, fieldState }) => (
-            <Field orientation="responsive" data-invalid={fieldState.invalid}>
-              <FieldContent>
-                <FieldLabel htmlFor="job-application-mode">Estado</FieldLabel>
-                {fieldState.invalid && (
-                  <FieldError errors={[fieldState.error]} />
-                )}
-              </FieldContent>
-              <Select
-                items={statusOptions}
-                name={field.name}
-                value={field.value}
-                onValueChange={field.onChange}
-              >
-                <SelectTrigger
-                  id="job-application-mode"
-                  aria-invalid={fieldState.invalid}
-                  className="min-w-40"
-                >
-                  <SelectValue placeholder="Selecciona una modalidad" />
-                </SelectTrigger>
-                <SelectContent>
-                  {statusOptions.map((item) => (
                     <SelectItem key={item.label} value={item.value}>
                       {item.label}
                     </SelectItem>

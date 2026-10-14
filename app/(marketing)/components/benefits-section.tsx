@@ -12,7 +12,7 @@ const BENEFITS = [
     icon: ListChecks,
     title: "Sabes en qué etapa va cada proceso",
     description:
-      "Mueve cada una entre Aplicada, Entrevista, Técnica y Oferta, y márcala como Activa, Rechazada, Retirada, Oferta aceptada o Ignorada.",
+      "Mueve cada una entre Aplicada, Entrevista, Prueba técnica, Entrevista técnica y Oferta, y márcala como Rechazada, Retirada, Vacante cerrada, Oferta aceptada o Ignorada. Si te equivocas, deshaces el cambio.",
   },
   {
     icon: LayoutDashboard,

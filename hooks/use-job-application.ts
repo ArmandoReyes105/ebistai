@@ -1,0 +1,113 @@
+"use client"
+
+import { toast } from "@/components/ui/toast"
+import { getErrorMessage, isNotFoundError } from "@/lib/api/error-messages"
+import { jobApplicationService } from "@/services/job-application-service"
+import {
+  ApplicationEvent,
+  JobApplication,
+} from "@/types/job-application.types"
+import { useAuth } from "@clerk/nextjs"
+import { useCallback, useEffect, useState } from "react"
+import { useApplicationActions } from "./use-application-actions"
+
+export type JobApplicationLoadState =
+  | "loading"
+  | "ready"
+  | "not-found"
+  | "error"
+
+export function useJobApplication(id: string) {
+  const { getToken } = useAuth()
+  const [application, setApplication] = useState<JobApplication | null>(null)
+  const [events, setEvents] = useState<ApplicationEvent[]>([])
+  const [loadState, setLoadState] = useState<JobApplicationLoadState>("loading")
+
+  // `silent` keeps the page visible while data refreshes in the background.
+  const load = useCallback(
+    async (silent = false) => {
+      if (!silent) setLoadState("loading")
+      try {
+        const token = await getToken()
+        const options = { token: token ?? undefined }
+        const [app, eventList] = await Promise.all([
+          jobApplicationService.getById(id, options),
+          jobApplicationService.getEvents(id, options),
+        ])
+        setApplication(app)
+        setEvents(eventList)
+        setLoadState("ready")
+      } catch (error) {
+        console.error(error)
+        if (isNotFoundError(error)) {
+          setLoadState("not-found")
+        } else if (!silent) {
+          setLoadState("error")
+        }
+      }
+    },
+    [getToken, id]
+  )
+
+  const refresh = useCallback(() => load(true), [load])
+
+  // Any action changes the timeline too, so reload the events alongside it.
+  const handleApplicationChange = useCallback(
+    (updated: JobApplication) => {
+      setApplication(updated)
+      void load(true)
+    },
+    [load]
+  )
+
+  const actions = useApplicationActions({
+    onApplicationChange: handleApplicationChange,
+    onStale: refresh,
+  })
+
+  const updateEventDate = useCallback(
+    async (eventId: string, occurredAt: Date): Promise<boolean> => {
+      try {
+        const token = await getToken()
+        const result = await jobApplicationService.updateEventDate(
+          id,
+          eventId,
+          { occurredAt },
+          { token: token ?? undefined }
+        )
+        handleApplicationChange(result.application)
+        toast.add({ title: "Fecha actualizada", type: "success" })
+        return true
+      } catch (error) {
+        console.error(error)
+        toast.add({
+          title: "Ups",
+          description: getErrorMessage(
+            error,
+            "No pudimos cambiar la fecha. Inténtalo de nuevo."
+          ),
+          type: "error",
+        })
+        return false
+      }
+    },
+    [getToken, id, handleApplicationChange]
+  )
+
+  useEffect(() => {
+    void Promise.resolve().then(() => load())
+  }, [load])
+
+  return {
+    application,
+    events,
+    loadState,
+    reload: load,
+    refresh,
+    updateEventDate,
+    changeStage: actions.changeStage,
+    changeStatus: actions.changeStatus,
+    revive: actions.revive,
+    undoEvent: actions.undoEvent,
+  }
+}

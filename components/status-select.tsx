@@ -7,7 +7,6 @@ import {
   SelectGroup,
   SelectItem,
   SelectTrigger,
-  SelectValue,
 } from "./ui/select"
 import { BadgeConfig } from "@/lib/components/badge-config"
 import { StatusBadge } from "./status-badge"
@@ -15,42 +14,50 @@ import { useState } from "react"
 
 interface StatusSelectProps<T extends number> {
   value: T
+  // Only the targets the user may pick; the current value does not need to be in here.
   items: EnumOption<T>[]
   config: Record<T, BadgeConfig>
-  onChange: (newValue: T) => Promise<void>
+  onChange: (newValue: T) => Promise<unknown>
+  disabled?: boolean
+  "aria-label"?: string
 }
 
+// Controlled by `value`: the parent updates it from the server response.
 const StatusSelect = <T extends number>({
   value,
   items,
   config,
   onChange,
+  disabled = false,
+  "aria-label": ariaLabel,
 }: StatusSelectProps<T>) => {
-  const [state, setState] = useState<T>(value)
+  const [isPending, setIsPending] = useState(false)
 
   const handleChange = async (newValue: T | null) => {
-    if (newValue === value) return
+    if (newValue === null || newValue === value) return
 
+    setIsPending(true)
     try {
-      setState(newValue!)
-      await onChange(newValue!)
+      await onChange(newValue)
     } finally {
+      setIsPending(false)
     }
   }
 
   return (
     <Select
       items={items}
-      value={state}
+      value={value}
       onValueChange={(newVal) => handleChange(newVal)}
+      disabled={disabled || isPending || items.length === 0}
     >
-      <SelectTrigger>
-        <StatusBadge value={state} config={config} />
+      <SelectTrigger aria-label={ariaLabel}>
+        <StatusBadge value={value} config={config} />
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
           {items.map((item) => (
-            <SelectItem key={item.label} value={item.value}>
+            <SelectItem key={item.value} value={item.value}>
               <StatusBadge value={item.value} config={config} />
             </SelectItem>
           ))}

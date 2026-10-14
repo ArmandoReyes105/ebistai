@@ -17,6 +17,7 @@ import {
   SquareArrowOutUpRight,
 } from "lucide-react"
 import { Fragment } from "react"
+import { safeHttpUrl } from "@/lib/safe-url"
 
 interface AntiGhostingRadarProps {
   radarApplications: JobApplication[]
@@ -27,7 +28,11 @@ interface AntiGhostingRadarProps {
 const MS_PER_DAY = 1000 * 60 * 60 * 24
 
 const getDaysSince = (date: Date): number =>
-  Math.floor((Date.now() - date.getTime()) / MS_PER_DAY)
+  Math.max(0, Math.floor((Date.now() - date.getTime()) / MS_PER_DAY))
+
+// Inactivity counts from the last stage change; fall back to the apply date.
+const getLastProgressDate = (application: JobApplication): Date =>
+  new Date(application.lastProgressAt ?? application.dateApplied)
 
 const AntiGhostingRadar = ({
   radarApplications,
@@ -51,8 +56,8 @@ const AntiGhostingRadar = ({
             <CardDescription>
               {radarApplications.length}{" "}
               {radarApplications.length !== 1
-                ? `postulaciones llevan ${radarGhostingThresholdDays} días o más sin noticias.`
-                : `postulación lleva ${radarGhostingThresholdDays} días o más sin noticias.`}
+                ? `postulaciones llevan ${radarGhostingThresholdDays} días o más sin avances.`
+                : `postulación lleva ${radarGhostingThresholdDays} días o más sin avances.`}
             </CardDescription>
           </div>
         </div>
@@ -79,8 +84,8 @@ const AntiGhostingRadar = ({
               <div className="flex flex-col">
                 <span className="text-sm">{application.jobTitle}</span>
                 <span className="text-xs text-muted-foreground">
-                  {application.company} · Aplicada sin cambios desde el{" "}
-                  {new Date(application.dateApplied).toLocaleDateString(
+                  {application.company} · Sin avances desde el{" "}
+                  {getLastProgressDate(application).toLocaleDateString(
                     "es-ES",
                     {
                       day: "2-digit",
@@ -92,9 +97,9 @@ const AntiGhostingRadar = ({
               </div>
 
               <div className="flex flex-row items-center gap-5">
-                {application.jobPostingUrl && (
+                {safeHttpUrl(application.jobPostingUrl) && (
                   <a
-                    href={application.jobPostingUrl}
+                    href={safeHttpUrl(application.jobPostingUrl)!}
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={`Ver oferta de ${application.jobTitle}`}
@@ -106,7 +111,7 @@ const AntiGhostingRadar = ({
 
                 <div className="flex flex-col">
                   <span className="text-xl font-bold text-amber-600 dark:text-amber-200">
-                    {getDaysSince(new Date(application.dateApplied))}
+                    {getDaysSince(getLastProgressDate(application))}
                   </span>
                   <span className="text-xs text-muted-foreground">días</span>
                 </div>

@@ -18,8 +18,9 @@ const JobApplicationList = () => {
     isLoading,
     fetchJobApplications,
     deleteApplication,
-    updateStatus,
-    updateStage,
+    changeStatus,
+    changeStage,
+    revive,
   } = useJobApplications()
 
   return (
@@ -52,12 +53,13 @@ const JobApplicationList = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {jobApplications.map((jobApplication, key) => (
+            {jobApplications.map((jobApplication) => (
               <JobApplicationRow
-                key={key}
+                key={jobApplication.id}
                 jobApplication={jobApplication}
-                handleStageChange={updateStage}
-                handleStatusChange={updateStatus}
+                handleStageChange={changeStage}
+                handleStatusChange={changeStatus}
+                handleRevive={revive}
                 onDelete={deleteApplication}
                 fetchJobApplications={fetchJobApplications}
               />

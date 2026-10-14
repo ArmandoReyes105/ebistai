@@ -5,19 +5,23 @@ export interface EnumOption<T> {
     label: string
 }
 
+// Display order of stages (not the numeric enum order).
 export const stageOptions: EnumOption<Stage>[] = [
-    { value: Stage.Applied, label: "Aplicado" },
+    { value: Stage.Applied, label: "Aplicada" },
     { value: Stage.Interview, label: "Entrevista" },
-    { value: Stage.TechnicalInterview, label: "Entrevista Técnica" },
+    { value: Stage.Assessment, label: "Prueba técnica" },
+    { value: Stage.TechnicalInterview, label: "Entrevista técnica" },
     { value: Stage.Offer, label: "Oferta" }
 ]
 
 export const statusOptions: EnumOption<Status>[] = [
-    { value: Status.Active, label: "Activo" },
-    { value: Status.Withdrawn, label: "Retirado" },
-    { value: Status.OfferAccepted, label: "Oferta Aceptada" },
-    { value: Status.Rejected, label: "Rechazado" },
-    { value: Status.Ignored, label: "Ignorado" },
+    { value: Status.Active, label: "Activa" },
+    { value: Status.Rejected, label: "Rechazada" },
+    { value: Status.Withdrawn, label: "Retirada" },
+    { value: Status.OfferAccepted, label: "Oferta aceptada" },
+    { value: Status.Ignored, label: "Ignorada" },
+    { value: Status.OfferDeclined, label: "Oferta rechazada" },
+    { value: Status.PositionClosed, label: "Vacante cerrada" },
 ]
 
 export const workModeOptions: EnumOption<WorkMode>[] = [

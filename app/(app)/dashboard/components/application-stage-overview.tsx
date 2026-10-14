@@ -65,13 +65,27 @@ const ApplicationStageOverview = ({
           <Progress
             value={
               totalApplications > 0
+                ? (byStage["Assessment"] / totalApplications) * 100
+                : 0
+            }
+            className="**:data-[slot=progress-indicator]:bg-cyan-400"
+          >
+            <ProgressLabel>
+              4. En Prueba técnica: {byStage["Assessment"]}
+            </ProgressLabel>
+            <ProgressValue />
+          </Progress>
+
+          <Progress
+            value={
+              totalApplications > 0
                 ? (byStage["TechnicalInterview"] / totalApplications) * 100
                 : 0
             }
             className="**:data-[slot=progress-indicator]:bg-indigo-400"
           >
             <ProgressLabel>
-              4. En Entrevista Técnica: {byStage["TechnicalInterview"]}
+              5. En Entrevista técnica: {byStage["TechnicalInterview"]}
             </ProgressLabel>
             <ProgressValue />
           </Progress>
@@ -84,7 +98,7 @@ const ApplicationStageOverview = ({
             }
             className="**:data-[slot=progress-indicator]:bg-green-400"
           >
-            <ProgressLabel>5. Ofertas: {byStage["Offer"]}</ProgressLabel>
+            <ProgressLabel>6. Ofertas: {byStage["Offer"]}</ProgressLabel>
             <ProgressValue />
           </Progress>
         </div>

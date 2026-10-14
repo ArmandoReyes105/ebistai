@@ -16,7 +16,8 @@ import { Separator } from "@/components/ui/separator"
 const STAGES = [
   { label: "Aplicada", count: 12 },
   { label: "Entrevista", count: 5 },
-  { label: "Técnica", count: 3 },
+  { label: "Prueba técnica", count: 2 },
+  { label: "Ent. técnica", count: 1 },
   { label: "Oferta", count: 1 },
 ]
 
@@ -42,7 +43,7 @@ const HeroPreview = () => {
               <CardTitle className="text-2xl">{TOTAL}</CardTitle>
             </CardHeader>
           </Card>
-          {STAGES.slice(1).map((stage) => (
+          {STAGES.slice(1, 4).map((stage) => (
             <Card key={stage.label}>
               <CardHeader>
                 <CardDescription>{stage.label}</CardDescription>
