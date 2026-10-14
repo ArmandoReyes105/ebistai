@@ -42,7 +42,8 @@ import { Controller, useForm } from "react-hook-form"
 
 interface UpdateApplicationFormProps {
   application: JobApplication
-  onSuccess: () => void
+  // Receives the updated application when the server returns it.
+  onSuccess: (updated?: JobApplication) => void
 }
 
 const UpdateApplicationForm = ({
@@ -58,7 +59,7 @@ const UpdateApplicationForm = ({
     try {
       const token = await getToken()
 
-      await jobApplicationService.update(
+      const updated = await jobApplicationService.update(
         application.id,
         {
           jobTitle: values.jobTitle,
@@ -83,7 +84,7 @@ const UpdateApplicationForm = ({
       })
 
       form.reset()
-      onSuccess?.()
+      onSuccess?.(updated ?? undefined)
     } catch (error) {
       toast.add({
         title: "Error",

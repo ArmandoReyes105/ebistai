@@ -14,16 +14,19 @@ export default function AppLayout({
 }>) {
   return (
     <TooltipProvider>
-      <SidebarProvider>
+      {/* h-svh (not min-h) bounds the app to the viewport; pages scroll inside the content wrapper. */}
+      <SidebarProvider className="h-svh">
         <AppSidebar />
-        <SidebarInset>
+        <SidebarInset className="min-h-0 overflow-hidden">
           <header className="flex h-12 shrink-0 items-center gap-2 border-b px-4">
             <SidebarTrigger />
             <div className="ml-auto">
               <UserNav />
             </div>
           </header>
-          {children}
+          <div className="flex min-h-0 flex-1 flex-col overflow-y-auto">
+            {children}
+          </div>
         </SidebarInset>
       </SidebarProvider>
     </TooltipProvider>

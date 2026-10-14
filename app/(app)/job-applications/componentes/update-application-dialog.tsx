@@ -12,7 +12,7 @@ import { JobApplication } from "@/types/job-application.types"
 
 interface UpdateApplicationDialogProps {
   application: JobApplication | null
-  onCreated?: () => void
+  onCreated?: (updated?: JobApplication) => void
   open: boolean
   onOpenChange: (open: boolean) => void
 }
@@ -37,9 +37,9 @@ const UpdateApplicationDialog = ({
 
         <UpdateApplicationForm
           application={application}
-          onSuccess={() => {
+          onSuccess={(updated) => {
             onOpenChange(false)
-            onCreated?.()
+            onCreated?.(updated)
           }}
         />
       </DialogContent>

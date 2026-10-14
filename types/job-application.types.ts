@@ -71,3 +71,17 @@ export interface ApplicationEvent {
     actor: Actor;
     canUndo: boolean;
 }
+
+export interface PagedResult<T> {
+    items: T[];
+    page: number;
+    pageSize: number;
+    totalCount: number;
+    // 0 when there are no results.
+    totalPages: number;
+}
+
+export interface JobApplicationSource {
+    id: number;
+    name: string;
+}

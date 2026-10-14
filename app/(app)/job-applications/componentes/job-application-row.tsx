@@ -47,7 +47,7 @@ interface JobApplicationRowProps {
   handleStageChange: (id: string, stage: Stage) => Promise<unknown>
   handleRevive: (id: string) => Promise<unknown>
   onDelete: (id: string) => Promise<void>
-  fetchJobApplications: () => Promise<void>
+  onUpdated: (updated?: JobApplication) => void
 }
 
 const JobApplicationRow = ({
@@ -56,7 +56,7 @@ const JobApplicationRow = ({
   handleStageChange,
   handleRevive,
   onDelete,
-  fetchJobApplications,
+  onUpdated,
 }: JobApplicationRowProps) => {
   const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState(false)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
@@ -198,7 +198,7 @@ const JobApplicationRow = ({
         open={isUpdateDialogOpen}
         onOpenChange={setIsUpdateDialogOpen}
         application={jobApplication}
-        onCreated={fetchJobApplications}
+        onCreated={onUpdated}
       />
     </>
   )

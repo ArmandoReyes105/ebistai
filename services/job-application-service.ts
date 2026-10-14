@@ -6,6 +6,8 @@ import {
   ChangeStatusRequest,
   CreateJobApplicationRequest,
   JobApplication,
+  JobApplicationSource,
+  PagedResult,
   ReviveRequest,
   UpdateEventDateRequest,
   UpdateJobApplicationRequest,
@@ -14,8 +16,15 @@ import {
 const BASE = "job-applications"
 
 export const jobApplicationService = {
-  getAll: (options?: RequestOptions) =>
-    apiClient.get<JobApplication[]>(BASE, { ...options }),
+  // `query` is an already-encoded query string (see job-application-query.ts).
+  getPage: (query: string, options?: RequestOptions) =>
+    apiClient.get<PagedResult<JobApplication>>(
+      query ? `${BASE}?${query}` : BASE,
+      { ...options }
+    ),
+
+  getSources: (options?: RequestOptions) =>
+    apiClient.get<JobApplicationSource[]>(`${BASE}/sources`, { ...options }),
 
   getById: (id: string, options?: RequestOptions) =>
     apiClient.get<JobApplication>(`${BASE}/${id}`, { ...options }),
