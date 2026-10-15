@@ -24,6 +24,8 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
+import { getErrorMessage } from "@/lib/api/error-messages"
+import CatalogAutocompleteField from "./catalog-autocomplete-field"
 import { toast } from "@/components/ui/toast"
 import {
   UpdateapplicationFormValues,
@@ -88,7 +90,10 @@ const UpdateApplicationForm = ({
     } catch (error) {
       toast.add({
         title: "Uy",
-        description: "No pudimos guardar los cambios. ¿Le damos otra vez?",
+        description: getErrorMessage(
+          error,
+          "No pudimos guardar los cambios. ¿Le damos otra vez?"
+        ),
         type: "error",
       })
       console.log(error)
@@ -135,22 +140,12 @@ const UpdateApplicationForm = ({
           )}
         />
 
-        <Controller
-          name="company"
+        <CatalogAutocompleteField
           control={form.control}
-          render={({ field, fieldState }) => (
-            <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor={field.name}>Compañía</FieldLabel>
-              <Input
-                {...field}
-                id={field.name}
-                aria-invalid={fieldState.invalid}
-                placeholder="Ej. Acme Corp"
-                autoComplete="off"
-              />
-              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-            </Field>
-          )}
+          name="company"
+          kind="companies"
+          label="Compañía"
+          placeholder="Ej. Acme Corp"
         />
 
         <Controller
@@ -171,22 +166,12 @@ const UpdateApplicationForm = ({
           )}
         />
 
-        <Controller
-          name="applicationSource"
+        <CatalogAutocompleteField
           control={form.control}
-          render={({ field, fieldState }) => (
-            <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor={field.name}>Fuente de aplicación</FieldLabel>
-              <Input
-                {...field}
-                id={field.name}
-                aria-invalid={fieldState.invalid}
-                placeholder="Ej. LinkedIn, referido..."
-                autoComplete="off"
-              />
-              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-            </Field>
-          )}
+          name="applicationSource"
+          kind="sources"
+          label="Fuente de aplicación"
+          placeholder="Ej. LinkedIn, referido..."
         />
 
         <Controller

@@ -25,6 +25,14 @@ const PROBLEM_MESSAGES: Record<string, string> = {
   date_applied_in_future:
     "La fecha de postulación no puede estar en el futuro.",
   event_not_found: "No encontramos ese evento. Puede que ya se haya deshecho.",
+  company_name_required: "Escribe el nombre de la compañía.",
+  company_name_too_long:
+    "El nombre de la compañía es demasiado largo (máximo 200 caracteres).",
+  source_name_required: "Escribe de dónde viene la postulación.",
+  source_name_too_long:
+    "El nombre de la fuente es demasiado largo (máximo 150 caracteres).",
+  catalog_name_conflict:
+    "Alguien registró ese nombre justo al mismo tiempo. ¿Le damos otra vez?",
 }
 
 export const CONFLICT_MESSAGE = "Algo cambió mientras tanto"
