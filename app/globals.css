@@ -56,18 +56,18 @@
     --card-foreground: oklch(0.141 0.005 285.823);
     --popover: oklch(1 0 0);
     --popover-foreground: oklch(0.141 0.005 285.823);
-    --primary: oklch(0.666 0.179 58.318);
-    --primary-foreground: oklch(0.21 0.05 50);
+    --primary: oklch(0.634 0.251 26.556);
+    --primary-foreground: oklch(0.985 0 0);
     --secondary: oklch(0.967 0.001 286.375);
     --secondary-foreground: oklch(0.21 0.006 285.885);
     --muted: oklch(0.967 0.001 286.375);
     --muted-foreground: oklch(0.552 0.016 285.938);
-    --accent: oklch(0.96 0.035 75);
-    --accent-foreground: oklch(0.3 0.07 52);
+    --accent: oklch(0.965 0.02 20);
+    --accent-foreground: oklch(0.42 0.15 26);
     --destructive: oklch(0.577 0.245 27.325);
     --border: oklch(0.92 0.004 286.32);
     --input: oklch(0.92 0.004 286.32);
-    --ring: oklch(0.666 0.179 58.318);
+    --ring: oklch(0.634 0.251 26.556);
     --chart-1: oklch(0.871 0.006 286.286);
     --chart-2: oklch(0.552 0.016 285.938);
     --chart-3: oklch(0.442 0.017 285.786);
@@ -76,12 +76,12 @@
     --radius: 0.625rem;
     --sidebar: oklch(0.985 0 0);
     --sidebar-foreground: oklch(0.141 0.005 285.823);
-    --sidebar-primary: oklch(0.666 0.179 58.318);
-    --sidebar-primary-foreground: oklch(0.21 0.05 50);
-    --sidebar-accent: oklch(0.96 0.035 75);
-    --sidebar-accent-foreground: oklch(0.3 0.07 52);
+    --sidebar-primary: oklch(0.634 0.251 26.556);
+    --sidebar-primary-foreground: oklch(0.985 0 0);
+    --sidebar-accent: oklch(0.965 0.02 20);
+    --sidebar-accent-foreground: oklch(0.42 0.15 26);
     --sidebar-border: oklch(0.92 0.004 286.32);
-    --sidebar-ring: oklch(0.666 0.179 58.318);
+    --sidebar-ring: oklch(0.634 0.251 26.556);
 }
 
 .dark {
@@ -91,18 +91,18 @@
     --card-foreground: oklch(0.985 0 0);
     --popover: oklch(0.21 0.006 285.885);
     --popover-foreground: oklch(0.985 0 0);
-    --primary: oklch(0.72 0.17 60);
-    --primary-foreground: oklch(0.21 0.05 50);
+    --primary: oklch(0.68 0.23 26.5);
+    --primary-foreground: oklch(0.985 0 0);
     --secondary: oklch(0.274 0.006 286.033);
     --secondary-foreground: oklch(0.985 0 0);
     --muted: oklch(0.274 0.006 286.033);
     --muted-foreground: oklch(0.705 0.015 286.067);
-    --accent: oklch(0.3 0.04 55);
-    --accent-foreground: oklch(0.95 0.03 75);
+    --accent: oklch(0.3 0.06 25);
+    --accent-foreground: oklch(0.95 0.02 20);
     --destructive: oklch(0.704 0.191 22.216);
     --border: oklch(1 0 0 / 10%);
     --input: oklch(1 0 0 / 15%);
-    --ring: oklch(0.6 0.15 58);
+    --ring: oklch(0.58 0.2 26.5);
     --chart-1: oklch(0.871 0.006 286.286);
     --chart-2: oklch(0.552 0.016 285.938);
     --chart-3: oklch(0.442 0.017 285.786);
@@ -110,12 +110,12 @@
     --chart-5: oklch(0.274 0.006 286.033);
     --sidebar: oklch(0.21 0.006 285.885);
     --sidebar-foreground: oklch(0.985 0 0);
-    --sidebar-primary: oklch(0.72 0.17 60);
-    --sidebar-primary-foreground: oklch(0.21 0.05 50);
-    --sidebar-accent: oklch(0.3 0.04 55);
-    --sidebar-accent-foreground: oklch(0.95 0.03 75);
+    --sidebar-primary: oklch(0.68 0.23 26.5);
+    --sidebar-primary-foreground: oklch(0.141 0.005 285.823);
+    --sidebar-accent: oklch(0.3 0.06 25);
+    --sidebar-accent-foreground: oklch(0.95 0.02 20);
     --sidebar-border: oklch(1 0 0 / 10%);
-    --sidebar-ring: oklch(0.6 0.15 58);
+    --sidebar-ring: oklch(0.58 0.2 26.5);
 }
 
 @layer base {
@@ -133,5 +133,30 @@
 @media (prefers-reduced-motion: no-preference) {
   html {
     scroll-behavior: smooth;
+  }
+}
+
+/* Application history: a soft highlight that travels down a dotted
+   connector, from one step to the next. */
+@keyframes timeline-wave {
+  from {
+    mask-position: 0 -100%;
+  }
+  to {
+    mask-position: 0 200%;
+  }
+}
+
+.timeline-wave {
+  mask-image: linear-gradient(to bottom, transparent, black, transparent);
+  mask-size: 100% 50%;
+  mask-repeat: no-repeat;
+  mask-position: 0 -100%;
+  animation: timeline-wave 2.8s cubic-bezier(0.32, 0.72, 0, 1) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .timeline-wave {
+    display: none;
   }
 }

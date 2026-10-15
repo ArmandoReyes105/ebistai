@@ -26,6 +26,7 @@ const AppSidebarNav = () => {
             render={<Link href={href} />}
             isActive={pathname === href || pathname.startsWith(`${href}/`)}
             tooltip={label}
+            className="data-active:bg-sidebar-primary data-active:text-sidebar-primary-foreground data-active:hover:bg-sidebar-primary data-active:hover:text-sidebar-primary-foreground"
           >
             <Icon />
             <span>{label}</span>
