@@ -12,6 +12,7 @@ import {
 import { Spinner } from "@/components/ui/spinner"
 import { PAGE_SIZES } from "@/lib/domain/job-application-query"
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react"
+import { cn } from "cn"
 
 type PageItem = number | "ellipsis-start" | "ellipsis-end"
 
@@ -67,15 +68,25 @@ const JobApplicationPagination = ({
     label: String(s),
   }))
 
+  const hasPages = totalPages > 1
+
   return (
-    <div className="flex shrink-0 flex-wrap items-center justify-between gap-x-4 gap-y-2 border-t bg-background px-2 py-2">
+    <div className="flex shrink-0 flex-wrap items-center justify-between gap-x-4 gap-y-2 bg-background px-2 py-2">
       <p
         aria-live="polite"
-        className="flex items-center gap-2 text-xs text-muted-foreground"
+        className="flex items-center gap-2 text-xs text-muted-foreground tabular-nums"
       >
-        {totalCount === 0
-          ? "0 postulaciones"
-          : `${from} a ${to} de ${totalCount} postulaciones`}
+        {totalCount === 0 ? (
+          "0 postulaciones"
+        ) : (
+          <span>
+            <span className="font-medium text-foreground">
+              {from}–{to}
+            </span>{" "}
+            de <span className="font-medium text-foreground">{totalCount}</span>{" "}
+            postulaciones
+          </span>
+        )}
         {isFetching && <Spinner aria-label="Actualizando lista" />}
       </p>
 
@@ -106,48 +117,63 @@ const JobApplicationPagination = ({
           </Select>
         </div>
 
-        <nav aria-label="Paginación" className="flex items-center gap-1">
-          <Button
-            variant="outline"
-            size="icon-sm"
-            aria-label="Página anterior"
-            disabled={page <= 1}
-            onClick={() => onPageChange(page - 1)}
-          >
-            <ChevronLeftIcon />
-          </Button>
-          {getPageItems(page, totalPages).map((item) =>
-            typeof item === "string" ? (
-              <span
-                key={item}
-                aria-hidden
-                className="px-1 text-xs text-muted-foreground"
-              >
-                …
-              </span>
-            ) : (
-              <Button
-                key={item}
-                variant={item === page ? "default" : "outline"}
-                size="icon-sm"
-                aria-label={`Ir a la página ${item}`}
-                aria-current={item === page ? "page" : undefined}
-                onClick={() => onPageChange(item)}
-              >
-                {item}
-              </Button>
-            )
-          )}
-          <Button
-            variant="outline"
-            size="icon-sm"
-            aria-label="Página siguiente"
-            disabled={page >= totalPages}
-            onClick={() => onPageChange(page + 1)}
-          >
-            <ChevronRightIcon />
-          </Button>
-        </nav>
+        {/* A single page needs no navigation. */}
+        {hasPages && (
+          <nav aria-label="Paginación" className="flex items-center gap-0.5">
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              aria-label="Página anterior"
+              disabled={page <= 1}
+              onClick={() => onPageChange(page - 1)}
+            >
+              <ChevronLeftIcon />
+            </Button>
+
+            {/* Mobile: compact "2 / 8" instead of the page list. */}
+            <span className="px-2 text-xs text-muted-foreground tabular-nums sm:hidden">
+              <span className="font-medium text-foreground">{page}</span> /{" "}
+              {totalPages}
+            </span>
+
+            {getPageItems(page, totalPages).map((item) =>
+              typeof item === "string" ? (
+                <span
+                  key={item}
+                  aria-hidden
+                  className="hidden px-1 text-xs text-muted-foreground sm:inline"
+                >
+                  …
+                </span>
+              ) : (
+                <Button
+                  key={item}
+                  variant={item === page ? "default" : "ghost"}
+                  size="icon-sm"
+                  aria-label={`Ir a la página ${item}`}
+                  aria-current={item === page ? "page" : undefined}
+                  onClick={() => onPageChange(item)}
+                  className={cn(
+                    "hidden tabular-nums sm:inline-flex",
+                    item !== page && "text-muted-foreground"
+                  )}
+                >
+                  {item}
+                </Button>
+              )
+            )}
+
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              aria-label="Página siguiente"
+              disabled={page >= totalPages}
+              onClick={() => onPageChange(page + 1)}
+            >
+              <ChevronRightIcon />
+            </Button>
+          </nav>
+        )}
       </div>
     </div>
   )

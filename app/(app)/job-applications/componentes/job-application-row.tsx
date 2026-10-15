@@ -60,19 +60,9 @@ const JobApplicationRow = ({
 }: JobApplicationRowProps) => {
   const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState(false)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
-  const [isReviving, setIsReviving] = useState(false)
 
   const stageTargets = getStageTargets(jobApplication)
   const statusTargets = getStatusTargets(jobApplication)
-
-  const revive = async () => {
-    setIsReviving(true)
-    try {
-      await handleRevive(jobApplication.id)
-    } finally {
-      setIsReviving(false)
-    }
-  }
 
   return (
     <>
@@ -93,20 +83,7 @@ const JobApplicationRow = ({
         <TableCell>{jobApplication.company}</TableCell>
         <TableCell>
           {isTerminal(jobApplication) ? (
-            <div className="flex flex-wrap items-center gap-2">
-              <ApplicationStateBadge application={jobApplication} />
-              {canRevive(jobApplication) && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  disabled={isReviving}
-                  onClick={revive}
-                >
-                  <RotateCcw data-icon="inline-start" />
-                  Revivir
-                </Button>
-              )}
-            </div>
+            <ApplicationStateBadge application={jobApplication} />
           ) : (
             <StatusSelect
               aria-label="Cambiar estado"
@@ -168,6 +145,14 @@ const JobApplicationRow = ({
                 <DropdownMenuGroup>
                   <DropdownMenuLabel>Mi Postulación</DropdownMenuLabel>
                   <DropdownMenuSeparator />
+                  {/* Kept in the menu, not inline, so reviving is deliberate. */}
+                  {canRevive(jobApplication) && (
+                    <DropdownMenuItem
+                      onClick={() => void handleRevive(jobApplication.id)}
+                    >
+                      <RotateCcw /> Revivir
+                    </DropdownMenuItem>
+                  )}
                   <DropdownMenuItem
                     onClick={() => setIsUpdateDialogOpen(true)}
                   >

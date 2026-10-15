@@ -10,6 +10,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import {
   JobApplicationFilters,
@@ -24,7 +32,7 @@ import {
   workModeOptions,
 } from "@/types/enums-options"
 import { JobApplicationSource } from "@/types/job-application.types"
-import { SearchIcon, XIcon } from "lucide-react"
+import { SearchIcon, SlidersHorizontalIcon, XIcon } from "lucide-react"
 import { useEffect, useRef, useState } from "react"
 
 const SEARCH_DEBOUNCE_MS = 300
@@ -44,50 +52,45 @@ const sortItems: { value: SortOption; label: string }[] = [
 // Select value meaning "no source filter".
 const ALL_SOURCES = "all"
 
-interface MultiFilterProps<T extends number> {
+interface ChipFilterProps<T extends number> {
   label: string
-  allLabel: string
   options: EnumOption<T>[]
   value: T[]
   onChange: (value: T[]) => void
 }
 
-// Multi-select: an empty selection means "no filter".
-function MultiFilter<T extends number>({
+// Multi-select shown as chips so every option is visible at once.
+// An empty selection means "no filter".
+function ChipFilter<T extends number>({
   label,
-  allLabel,
   options,
   value,
   onChange,
-}: MultiFilterProps<T>) {
-  const summary = () => {
-    if (value.length === 0) return allLabel
-    if (value.length === 1) {
-      return options.find((o) => o.value === value[0])?.label ?? allLabel
-    }
-    return `${label}: ${value.length}`
-  }
-
+}: ChipFilterProps<T>) {
   return (
-    <Select
-      multiple
-      items={options}
-      value={value}
-      onValueChange={(next) => onChange(next as T[])}
-    >
-      <SelectTrigger aria-label={`Filtrar por ${label.toLowerCase()}`}>
-        <SelectValue>{summary}</SelectValue>
-      </SelectTrigger>
-      <SelectContent alignItemWithTrigger={false} align="start">
-        <SelectGroup>
-          {options.map((o) => (
-            <SelectItem key={o.value} value={o.value}>
-              {o.label}
-            </SelectItem>
-          ))}
-        </SelectGroup>
-      </SelectContent>
-    </Select>
+    <fieldset className="flex flex-col">
+      <legend className="mb-2 text-xs font-medium">{label}</legend>
+      <ToggleGroup
+        multiple
+        aria-label={`Filtrar por ${label.toLowerCase()}`}
+        variant="outline"
+        size="sm"
+        spacing={1.5}
+        className="w-full flex-wrap"
+        value={value.map(String)}
+        onValueChange={(next) => onChange(next.map((v) => Number(v) as T))}
+      >
+        {options.map((o) => (
+          <ToggleGroupItem
+            key={o.value}
+            value={String(o.value)}
+            className="data-pressed:border-primary data-pressed:bg-primary/10 data-pressed:text-primary"
+          >
+            {o.label}
+          </ToggleGroupItem>
+        ))}
+      </ToggleGroup>
+    </fieldset>
   )
 }
 
@@ -155,6 +158,8 @@ interface JobApplicationFiltersBarProps {
   onClear: () => void
 }
 
+// The bar keeps the everyday controls (search, state, sort); the rest live
+// in a side panel opened from "Filtros".
 const JobApplicationFiltersBar = ({
   filters,
   sources,
@@ -163,11 +168,24 @@ const JobApplicationFiltersBar = ({
 }: JobApplicationFiltersBarProps) => {
   // Remounting the search input is how "clear" resets its typed text.
   const [clearCount, setClearCount] = useState(0)
+  const [isPanelOpen, setIsPanelOpen] = useState(false)
 
   const sourceItems = [
     { value: ALL_SOURCES, label: "Todas las fuentes" },
     ...sources.map((s) => ({ value: String(s.id), label: s.name })),
   ]
+
+  // Selections made in the side panel, shown as a count on its button.
+  const panelCount =
+    filters.status.length +
+    filters.stage.length +
+    filters.mode.length +
+    (filters.sourceId === null ? 0 : 1)
+
+  const handleClear = () => {
+    setClearCount((c) => c + 1)
+    onClear()
+  }
 
   return (
     <div
@@ -198,54 +216,6 @@ const JobApplicationFiltersBar = ({
         ))}
       </ToggleGroup>
 
-      <MultiFilter
-        label="Estatus"
-        allLabel="Todos los estatus"
-        options={statusOptions}
-        value={filters.status}
-        onChange={(status) => onChange({ status })}
-      />
-      <MultiFilter
-        label="Etapa"
-        allLabel="Todas las etapas"
-        options={stageOptions}
-        value={filters.stage}
-        onChange={(stage) => onChange({ stage })}
-      />
-      <MultiFilter
-        label="Modalidad"
-        allLabel="Todas las modalidades"
-        options={workModeOptions}
-        value={filters.mode}
-        onChange={(mode) => onChange({ mode })}
-      />
-
-      <Select
-        items={sourceItems}
-        value={
-          filters.sourceId === null ? ALL_SOURCES : String(filters.sourceId)
-        }
-        onValueChange={(next) =>
-          onChange({
-            sourceId:
-              next === null || next === ALL_SOURCES ? null : Number(next),
-          })
-        }
-      >
-        <SelectTrigger aria-label="Filtrar por fuente">
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent alignItemWithTrigger={false} align="start">
-          <SelectGroup>
-            {sourceItems.map((s) => (
-              <SelectItem key={s.value} value={s.value}>
-                {s.label}
-              </SelectItem>
-            ))}
-          </SelectGroup>
-        </SelectContent>
-      </Select>
-
       <Select
         items={sortItems}
         value={filters.sort}
@@ -266,17 +236,113 @@ const JobApplicationFiltersBar = ({
       </Select>
 
       {hasActiveFilters(filters) && (
-        <Button
-          variant="ghost"
-          onClick={() => {
-            setClearCount((c) => c + 1)
-            onClear()
-          }}
-        >
+        <Button variant="ghost" onClick={handleClear}>
           <XIcon data-icon="inline-start" />
           Limpiar filtros
         </Button>
       )}
+
+      {/* Pushed to the far right; everything else stays on the left. */}
+      <Button
+        variant="outline"
+        className="ml-auto"
+        aria-label={
+          panelCount > 0 ? `Filtros, ${panelCount} activos` : "Filtros"
+        }
+        onClick={() => setIsPanelOpen(true)}
+      >
+        <SlidersHorizontalIcon data-icon="inline-start" />
+        Filtros
+        {panelCount > 0 && (
+          <span className="ml-0.5 inline-flex size-4 items-center justify-center bg-primary text-[10px] font-semibold text-primary-foreground tabular-nums">
+            {panelCount}
+          </span>
+        )}
+      </Button>
+
+      <Sheet open={isPanelOpen} onOpenChange={setIsPanelOpen}>
+        <SheetContent>
+          <SheetHeader>
+            <SheetTitle>Filtros</SheetTitle>
+            <SheetDescription>
+              Los cambios se aplican al momento.
+            </SheetDescription>
+          </SheetHeader>
+
+          <div className="flex flex-col gap-6 overflow-y-auto px-4 pb-4">
+            <ChipFilter
+              label="Estatus"
+              options={statusOptions}
+              value={filters.status}
+              onChange={(status) => onChange({ status })}
+            />
+            <ChipFilter
+              label="Etapa"
+              options={stageOptions}
+              value={filters.stage}
+              onChange={(stage) => onChange({ stage })}
+            />
+            <ChipFilter
+              label="Modalidad"
+              options={workModeOptions}
+              value={filters.mode}
+              onChange={(mode) => onChange({ mode })}
+            />
+
+            <div className="flex flex-col gap-2">
+              <span id="source-filter-label" className="text-xs font-medium">
+                Fuente
+              </span>
+              <Select
+                items={sourceItems}
+                value={
+                  filters.sourceId === null
+                    ? ALL_SOURCES
+                    : String(filters.sourceId)
+                }
+                onValueChange={(next) =>
+                  onChange({
+                    sourceId:
+                      next === null || next === ALL_SOURCES
+                        ? null
+                        : Number(next),
+                  })
+                }
+              >
+                <SelectTrigger
+                  aria-labelledby="source-filter-label"
+                  className="w-full"
+                >
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent alignItemWithTrigger={false} align="start">
+                  <SelectGroup>
+                    {sourceItems.map((s) => (
+                      <SelectItem key={s.value} value={s.value}>
+                        {s.label}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          <SheetFooter className="flex-row border-t">
+            <Button
+              variant="ghost"
+              className="flex-1"
+              disabled={!hasActiveFilters(filters)}
+              onClick={handleClear}
+            >
+              Limpiar todo
+            </Button>
+            <Button className="flex-1" onClick={() => setIsPanelOpen(false)}>
+              Ver resultados
+            </Button>
+          </SheetFooter>
+        </SheetContent>
+      </Sheet>
     </div>
   )
 }

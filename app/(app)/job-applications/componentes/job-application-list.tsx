@@ -25,10 +25,12 @@ import { useJobApplications } from "@/hooks/use-job-applications"
 import { cn } from "@/lib/utils"
 import { JobApplication } from "@/types/job-application.types"
 import {
+  ArrowLeftIcon,
   BriefcaseBusinessIcon,
   SearchXIcon,
   TriangleAlertIcon,
 } from "lucide-react"
+import Link from "next/link"
 import { useEffect, useState } from "react"
 import JobApplicationDialog from "./job-application-dialog"
 import JobApplicationFiltersBar from "./job-application-filters"
@@ -88,6 +90,13 @@ const JobApplicationList = () => {
     <div className="flex min-h-0 flex-1 flex-col gap-4">
       <div className="flex shrink-0 flex-wrap items-center justify-between gap-2">
         <div className="flex flex-col">
+          <Link
+            href="/dashboard"
+            className="mb-2 flex w-fit items-center gap-2 text-sm text-muted-foreground hover:text-foreground"
+          >
+            <ArrowLeftIcon className="size-4" />
+            Volver al dashboard
+          </Link>
           <h1 className="text-2xl font-bold">Mis solicitudes de trabajo</h1>
           <span className="text-sm text-muted-foreground">
             Registra cada vacante, filtra tus procesos y mantén su estado al
@@ -109,16 +118,16 @@ const JobApplicationList = () => {
       )}
 
       {/* The card is the only thing that grows; the body scrolls, the footer stays. */}
-      <div className="flex min-h-0 flex-1 flex-col border">
+      <div className="flex min-h-0 flex-1 flex-col">
         {loadFailed ? (
           <Empty>
             <EmptyHeader>
               <EmptyMedia variant="icon">
                 <TriangleAlertIcon />
               </EmptyMedia>
-              <EmptyTitle>No pudimos cargar tus postulaciones</EmptyTitle>
+              <EmptyTitle>Uy, no pudimos traer tus postulaciones</EmptyTitle>
               <EmptyDescription>
-                Revisa tu conexión e inténtalo de nuevo.
+                Revisa tu conexión y lo intentamos otra vez.
               </EmptyDescription>
             </EmptyHeader>
             <EmptyContent>
@@ -135,8 +144,8 @@ const JobApplicationList = () => {
               </EmptyMedia>
               <EmptyTitle>Aún no tienes postulaciones</EmptyTitle>
               <EmptyDescription>
-                Registra tu primera vacante y sigue cada paso del proceso desde
-                aquí.
+                Registra tu primera vacante y aquí te ayudamos a seguirle la
+                pista a cada paso.
               </EmptyDescription>
             </EmptyHeader>
             <EmptyContent>
@@ -151,11 +160,10 @@ const JobApplicationList = () => {
                   <EmptyMedia variant="icon">
                     <SearchXIcon />
                   </EmptyMedia>
-                  <EmptyTitle>
-                    Ninguna postulación coincide con estos filtros
-                  </EmptyTitle>
+                  <EmptyTitle>Nada por aquí con estos filtros</EmptyTitle>
                   <EmptyDescription>
-                    Prueba con otra búsqueda o quita algún filtro.
+                    Prueba con otra búsqueda o quita algún filtro, a ver qué
+                    sale.
                   </EmptyDescription>
                 </EmptyHeader>
                 <EmptyContent>
