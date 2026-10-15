@@ -26,9 +26,9 @@ export function useDashboardStats() {
       setData(await loadStats())
     } catch (error) {
       toast.add({
-        title: "Error",
+        title: "Uy",
         description:
-          "Lo sentimos, ocurrió un error al recuperar su información.",
+          "Se nos atoró algo al traer tu resumen. ¿Lo intentamos de nuevo en un ratito?",
         type: "error",
       })
       console.error(error)
@@ -80,5 +80,11 @@ export function useDashboardStats() {
     void Promise.resolve().then(fetchDashboardStats)
   }, [fetchDashboardStats])
 
-  return { data, isLoading, fetchDashboardStats, markAsIgnored }
+  return {
+    data,
+    isLoading,
+    fetchDashboardStats,
+    refreshDashboardStats,
+    markAsIgnored,
+  }
 }

@@ -26,7 +26,7 @@ const ApplicationStageOverview = ({
         <div className="flex flex-col gap-4">
           <Progress
             value={100}
-            className="**:data-[slot=progress-indicator]:bg-amber-400"
+            className="**:data-[slot=progress-indicator]:bg-primary"
           >
             <ProgressLabel>
               1. Total de postulaciones: {totalApplications}

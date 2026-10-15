@@ -43,13 +43,13 @@ const AntiGhostingRadar = ({
     <Card>
       <CardHeader>
         <div className="flex flex-row items-center gap-4">
-          <div className="bg-amber-400/20 p-2">
-            <Radar className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+          <div className="bg-primary/20 p-2">
+            <Radar className="h-4 w-4 text-primary" />
           </div>
           <div>
             <CardTitle>
               Radar Anti-ghosting{" "}
-              <span className="ml-1 bg-amber-400/20 p-1 text-amber-600 dark:text-amber-400">
+              <span className="ml-1 bg-primary/20 p-1 text-primary">
                 {radarApplications.length}
               </span>
             </CardTitle>
@@ -74,7 +74,7 @@ const AntiGhostingRadar = ({
           <div className="flex flex-row gap-4">
             <Check className="h-4 w-4 text-green-400" />
             <span className="text-muted-foreground">
-              Ninguna postulación supera el umbral.
+              Todo en orden: nadie te ha dejado en visto.
             </span>
           </div>
         )}
@@ -110,7 +110,7 @@ const AntiGhostingRadar = ({
                 )}
 
                 <div className="flex flex-col">
-                  <span className="text-xl font-bold text-amber-600 dark:text-amber-200">
+                  <span className="text-xl font-bold text-primary">
                     {getDaysSince(getLastProgressDate(application))}
                   </span>
                   <span className="text-xs text-muted-foreground">días</span>

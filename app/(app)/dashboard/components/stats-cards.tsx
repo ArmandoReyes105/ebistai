@@ -19,14 +19,14 @@ const StatsCards = ({ totalApplications, byStage }: StatsCardsProps) => {
         <CardHeader>
           <div className="flex flex-row items-center justify-between">
             <CardTitle>Total de postulaciones</CardTitle>
-            <div className="bg-amber-400/20 p-2">
-              <Layers className="h-4 w-4 text-amber-400" />
+            <div className="bg-primary/20 p-2">
+              <Layers className="h-4 w-4 text-primary" />
             </div>
           </div>
         </CardHeader>
         <CardContent>
           <h2 className="mb-2 text-2xl font-bold">{totalApplications}</h2>
-          <div className="mb-1 h-1 w-full bg-amber-500" />
+          <div className="mb-1 h-1 w-full bg-primary" />
           <span className="text-xs text-muted-foreground">
             Registradas en Ebistai
           </span>
