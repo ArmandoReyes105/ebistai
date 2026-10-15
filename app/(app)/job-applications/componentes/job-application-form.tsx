@@ -84,8 +84,8 @@ const JobApplicationForm = ({ onSuccess }: JobApplicationFormProps) => {
       )
 
       toast.add({
-        title: "Solicitud creada exitosamente",
-        description: "La solicitud de empleo se agregó correctamente.",
+        title: "¡Listo, ya quedó registrada!",
+        description: "Mucha suerte con esta. Aquí le seguimos la pista contigo.",
         type: "success",
       })
 
@@ -93,8 +93,8 @@ const JobApplicationForm = ({ onSuccess }: JobApplicationFormProps) => {
       onSuccess?.()
     } catch (error) {
       toast.add({
-        title: "Error",
-        description: "No se puedo crear la solicitd. Intentelo de nuevo.",
+        title: "Uy",
+        description: "No pudimos guardar tu postulación. ¿Le damos otra vez?",
         type: "error",
       })
       console.log(error)

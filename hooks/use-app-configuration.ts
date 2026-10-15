@@ -16,15 +16,15 @@ function showSavedToast(ignoredCount?: number) {
       title: `Listo, marqué ${ignoredCount} ${
         ignoredCount === 1 ? "postulación" : "postulaciones"
       } como ${ignoredCount === 1 ? "ignorada" : "ignoradas"}`,
-      description: "Tus preferencias se actualizaron.",
+      description: "Tus preferencias ya están al día.",
       type: "success",
     })
     return
   }
 
   toast.add({
-    title: "Configuración guardada",
-    description: "Tus preferencias se actualizaron.",
+    title: "¡Guardado!",
+    description: "Tus preferencias ya están al día.",
     type: "success",
   })
 }
@@ -56,8 +56,9 @@ export function useAppConfiguration() {
       setConfig(result)
     } catch (error) {
       toast.add({
-        title: "Error",
-        description: "No pudimos cargar tu configuración.",
+        title: "Uy",
+        description:
+          "Se nos atoró algo al cargar tu configuración. ¿Recargas la página?",
         type: "error",
       })
       console.error(error)
@@ -84,8 +85,8 @@ export function useAppConfiguration() {
       } catch (error) {
         setConfig(previous)
         toast.add({
-          title: "Error",
-          description: "No pudimos guardar tu configuración.",
+          title: "Uy",
+          description: "No pudimos guardar tus cambios. ¿Le damos otra vez?",
           type: "error",
         })
         console.error(error)
@@ -111,8 +112,8 @@ export function useAppConfiguration() {
         showSavedToast(result?.ignoredCount)
       } catch (error) {
         toast.add({
-          title: "Error",
-          description: "No pudimos guardar tu configuración.",
+          title: "Uy",
+          description: "No pudimos guardar tus cambios. ¿Le damos otra vez?",
           type: "error",
         })
         console.error(error)
@@ -131,10 +132,12 @@ export function useAppConfiguration() {
       const autoIgnoreAfter =
         changes.enableRadarAutoIgnore ?? previous.enableRadarAutoIgnore
       const thresholdAfter =
-        changes.radarGhostingThresholdDays ?? previous.radarGhostingThresholdDays
+        changes.radarGhostingThresholdDays ??
+        previous.radarGhostingThresholdDays
 
       const isEnabling =
-        changes.enableRadarAutoIgnore === true && !previous.enableRadarAutoIgnore
+        changes.enableRadarAutoIgnore === true &&
+        !previous.enableRadarAutoIgnore
       const isLowering =
         previous.enableRadarAutoIgnore &&
         autoIgnoreAfter &&
@@ -158,8 +161,9 @@ export function useAppConfiguration() {
           affectedCount = preview.affectedCount
         } catch (error) {
           toast.add({
-            title: "Error",
-            description: "No pudimos revisar tus postulaciones. Intenta de nuevo.",
+            title: "Uy",
+            description:
+              "No pudimos revisar tus postulaciones. ¿Le damos otra vez?",
             type: "error",
           })
           console.error(error)

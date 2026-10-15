@@ -57,9 +57,9 @@ export function useJobApplications({
         if (controller.signal.aborted) return
         setIsFetching(false)
         toast.add({
-          title: "Error",
+          title: "Uy",
           description:
-            "No pudimos cargar tus postulaciones. Inténtalo de nuevo en un momento.",
+            "Se nos atoró algo al traer tus postulaciones. ¿Lo intentamos de nuevo en un ratito?",
           type: "error",
         })
         console.error(error)
@@ -120,8 +120,8 @@ export function useJobApplications({
         })
       }
       toast.add({
-        title: "Error",
-        description: "No se pudo eliminar la solicitud. Inténtalo de nuevo.",
+        title: "Uy",
+        description: "No pudimos eliminar la postulación. ¿Le damos otra vez?",
         type: "error",
       })
       console.error(error)

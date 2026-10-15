@@ -3,19 +3,13 @@
 import { toast } from "@/components/ui/toast"
 import { getErrorMessage, isNotFoundError } from "@/lib/api/error-messages"
 import { jobApplicationService } from "@/services/job-application-service"
-import {
-  ApplicationEvent,
-  JobApplication,
-} from "@/types/job-application.types"
+import { ApplicationEvent, JobApplication } from "@/types/job-application.types"
 import { useAuth } from "@clerk/nextjs"
 import { useCallback, useEffect, useState } from "react"
 import { useApplicationActions } from "./use-application-actions"
 
 export type JobApplicationLoadState =
-  | "loading"
-  | "ready"
-  | "not-found"
-  | "error"
+  "loading" | "ready" | "not-found" | "error"
 
 export function useJobApplication(id: string) {
   const { getToken } = useAuth()
@@ -76,15 +70,15 @@ export function useJobApplication(id: string) {
           { token: token ?? undefined }
         )
         handleApplicationChange(result.application)
-        toast.add({ title: "Fecha actualizada", type: "success" })
+        toast.add({ title: "¡Listo, fecha actualizada!", type: "success" })
         return true
       } catch (error) {
         console.error(error)
         toast.add({
-          title: "Ups",
+          title: "Uy",
           description: getErrorMessage(
             error,
-            "No pudimos cambiar la fecha. Inténtalo de nuevo."
+            "No pudimos cambiar la fecha. ¿Le damos otra vez?"
           ),
           type: "error",
         })

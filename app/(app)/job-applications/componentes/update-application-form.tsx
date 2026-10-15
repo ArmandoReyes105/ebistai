@@ -78,8 +78,8 @@ const UpdateApplicationForm = ({
       )
 
       toast.add({
-        title: "Solicitud actualizada exitosamente",
-        description: "La solicitud de empleo se actualizó correctamente.",
+        title: "¡Listo, cambios guardados!",
+        description: "Tu postulación ya está al día.",
         type: "success",
       })
 
@@ -87,8 +87,8 @@ const UpdateApplicationForm = ({
       onSuccess?.(updated ?? undefined)
     } catch (error) {
       toast.add({
-        title: "Error",
-        description: "No se puedo actualizar la solicitd. Intentelo de nuevo.",
+        title: "Uy",
+        description: "No pudimos guardar los cambios. ¿Le damos otra vez?",
         type: "error",
       })
       console.log(error)

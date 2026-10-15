@@ -27,18 +27,20 @@ const DeleteApplicationDialog = ({
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>
+          <AlertDialogTitle>¿Seguro que quieres eliminarla?</AlertDialogTitle>
           <AlertDialogDescription>
-            Esta acción no se puede deshacer. Se eliminará permanentemente esta
-            solicitud para{" "}
-            {application !== null ? (
-              <span className="font-bold">{application.jobTitle}</span>
-            ) : undefined}
-            .
+            Vamos a borrar para siempre tu postulación
+            {application !== null && (
+              <>
+                {" "}
+                a <span className="font-bold">{application.jobTitle}</span>
+              </>
+            )}
+            . Esto ya no se puede deshacer.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Cancelar</AlertDialogCancel>
+          <AlertDialogCancel>Mejor no</AlertDialogCancel>
           <AlertDialogAction
             variant={"destructive"}
             onClick={() => {
@@ -46,7 +48,7 @@ const DeleteApplicationDialog = ({
               onOpenChange(false)
             }}
           >
-            Eliminar
+            Sí, eliminar
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

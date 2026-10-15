@@ -43,9 +43,9 @@ export function useApplicationActions({
       if (isConflict || isNotFoundError(error)) onStale()
 
       toast.add({
-        title: isConflict ? "Algo cambió mientras tanto" : "Ups",
+        title: isConflict ? "Algo cambió mientras tanto" : "Uy",
         description: isConflict
-          ? "Actualicé la información para que veas lo último."
+          ? "Ya te traje lo más reciente para que no te pierdas nada."
           : getErrorMessage(error, fallback),
         type: isConflict ? "warning" : "error",
       })
@@ -63,10 +63,10 @@ export function useApplicationActions({
           { token: token ?? undefined }
         )
         onApplicationChange(result.application)
-        toast.add({ title: "Cambio deshecho", type: "success" })
+        toast.add({ title: "¡Listo, cambio deshecho!", type: "success" })
         return true
       } catch (error) {
-        reportError(error, "No pudimos deshacer el cambio. Inténtalo de nuevo.")
+        reportError(error, "No pudimos deshacer el cambio. ¿Le damos otra vez?")
         return false
       }
     },
@@ -75,7 +75,9 @@ export function useApplicationActions({
 
   const run = useCallback(
     async (
-      request: (token: string | undefined) => Promise<ApplicationActionResponse>,
+      request: (
+        token: string | undefined
+      ) => Promise<ApplicationActionResponse>,
       message: string,
       fallbackError: string
     ): Promise<boolean> => {
@@ -110,7 +112,7 @@ export function useApplicationActions({
       run(
         (token) => jobApplicationService.changeStage(id, { stage }, { token }),
         describeStageChange(stage),
-        "No pudimos cambiar la etapa. Inténtalo de nuevo."
+        "No pudimos mover la etapa. ¿Le damos otra vez?"
       ),
     [run]
   )
@@ -121,7 +123,7 @@ export function useApplicationActions({
         (token) =>
           jobApplicationService.changeStatus(id, { status }, { token }),
         describeStatusChange(status),
-        "No pudimos cambiar el estado. Inténtalo de nuevo."
+        "No pudimos cambiar el estado. ¿Le damos otra vez?"
       ),
     [run]
   )
@@ -131,7 +133,7 @@ export function useApplicationActions({
       run(
         (token) => jobApplicationService.revive(id, {}, { token }),
         describeStatusChange(Status.Active),
-        "No pudimos revivir la postulación. Inténtalo de nuevo."
+        "No pudimos revivir la postulación. ¿Le damos otra vez?"
       ),
     [run]
   )
