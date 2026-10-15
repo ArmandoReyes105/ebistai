@@ -1,12 +1,21 @@
 import { StatusBadge } from "@/components/status-badge"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import {
+  Card,
+  CardAction,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { modalityBadgeConfig } from "@/lib/components/badge-config"
 import { JobApplication } from "@/types/job-application.types"
+import { SquarePen } from "lucide-react"
 import type { ReactNode } from "react"
 
 interface ApplicationInfoCardProps {
   application: JobApplication
+  onEdit: () => void
 }
 
 const formatDate = (value: Date | string) =>
@@ -16,7 +25,10 @@ const formatDate = (value: Date | string) =>
     year: "numeric",
   })
 
-const ApplicationInfoCard = ({ application }: ApplicationInfoCardProps) => {
+const ApplicationInfoCard = ({
+  application,
+  onEdit,
+}: ApplicationInfoCardProps) => {
   const items: { label: string; value: ReactNode }[] = [
     { label: "Fuente", value: application.applicationSource },
     {
@@ -39,6 +51,12 @@ const ApplicationInfoCard = ({ application }: ApplicationInfoCardProps) => {
     <Card>
       <CardHeader>
         <CardTitle>Detalles</CardTitle>
+        <CardAction>
+          <Button variant="outline" size="sm" onClick={onEdit}>
+            <SquarePen data-icon="inline-start" />
+            Editar
+          </Button>
+        </CardAction>
       </CardHeader>
       <Separator />
       <CardContent>

@@ -24,7 +24,7 @@ import {
 import { Stage, Status } from "@/types/enums"
 import { stageOptions, statusOptions } from "@/types/enums-options"
 import { JobApplication } from "@/types/job-application.types"
-import { RotateCcw, SquarePen } from "lucide-react"
+import { RotateCcw } from "lucide-react"
 import { useState } from "react"
 
 interface ApplicationActionsCardProps {
@@ -32,7 +32,6 @@ interface ApplicationActionsCardProps {
   onStageChange: (stage: Stage) => Promise<unknown>
   onStatusChange: (status: Status) => Promise<unknown>
   onRevive: () => Promise<unknown>
-  onEdit: () => void
 }
 
 const ApplicationActionsCard = ({
@@ -40,7 +39,6 @@ const ApplicationActionsCard = ({
   onStageChange,
   onStatusChange,
   onRevive,
-  onEdit,
 }: ApplicationActionsCardProps) => {
   const [isReviving, setIsReviving] = useState(false)
 
@@ -98,18 +96,14 @@ const ApplicationActionsCard = ({
               />
             </Field>
           </div>
-          <div className="flex flex-wrap gap-2">
-            {canRevive(application) && (
+          {canRevive(application) && (
+            <div className="flex flex-wrap gap-2">
               <Button variant="outline" disabled={isReviving} onClick={revive}>
                 <RotateCcw data-icon="inline-start" />
                 Revivir
               </Button>
-            )}
-            <Button variant="outline" onClick={onEdit}>
-              <SquarePen data-icon="inline-start" />
-              Editar detalles
-            </Button>
-          </div>
+            </div>
+          )}
         </FieldGroup>
       </CardContent>
     </Card>
