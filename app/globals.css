@@ -143,6 +143,80 @@
   }
 }
 
+/* Sweep transitions (clip-path wipe + a short slide) for content that is
+   swapped in place, e.g. the Tai tile stepping through applications.
+   "fwd" sweeps left-to-right (next), "back" right-to-left (previous). */
+@theme {
+  --animate-sweep-out-fwd: sweep-out-fwd 140ms ease-in both;
+  --animate-sweep-in-fwd: sweep-in-fwd 200ms ease-out both;
+  --animate-sweep-out-back: sweep-out-back 140ms ease-in both;
+  --animate-sweep-in-back: sweep-in-back 200ms ease-out both;
+
+  @keyframes sweep-out-fwd {
+    from {
+      clip-path: inset(0 0 0 0);
+      transform: translateX(0);
+    }
+    to {
+      clip-path: inset(0 0 0 100%);
+      transform: translateX(12px);
+    }
+  }
+  @keyframes sweep-in-fwd {
+    from {
+      clip-path: inset(0 100% 0 0);
+      transform: translateX(-12px);
+    }
+    to {
+      clip-path: inset(0 0 0 0);
+      transform: translateX(0);
+    }
+  }
+  @keyframes sweep-out-back {
+    from {
+      clip-path: inset(0 0 0 0);
+      transform: translateX(0);
+    }
+    to {
+      clip-path: inset(0 100% 0 0);
+      transform: translateX(-12px);
+    }
+  }
+  @keyframes sweep-in-back {
+    from {
+      clip-path: inset(0 0 0 100%);
+      transform: translateX(12px);
+    }
+    to {
+      clip-path: inset(0 0 0 0);
+      transform: translateX(0);
+    }
+  }
+}
+
+/* Thin, square scrollbar in the UI's neutral palette, for in-page scroll
+   areas (tables, panels). Firefox and Chromium read scrollbar-color; the
+   ::-webkit-* rules cover Safari. */
+@utility scrollbar-ui {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-muted-foreground) var(--color-muted);
+
+  &::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  &::-webkit-scrollbar-track,
+  &::-webkit-scrollbar-corner {
+    background: var(--color-muted);
+  }
+  &::-webkit-scrollbar-thumb {
+    background: var(--color-muted-foreground);
+  }
+  &::-webkit-scrollbar-thumb:hover {
+    background: var(--color-foreground);
+  }
+}
+
 /* Application history: a soft highlight that travels down a dotted
    connector, from one step to the next. */
 @keyframes timeline-wave {
