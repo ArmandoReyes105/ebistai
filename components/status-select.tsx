@@ -19,6 +19,10 @@ interface StatusSelectProps<T extends number> {
   config: Record<T, BadgeConfig>
   onChange: (newValue: T) => Promise<unknown>
   disabled?: boolean
+  // Extra classes for the trigger only; the popup keeps the theme styling.
+  triggerClassName?: string
+  // Show the current value as plain text instead of a coloured badge.
+  plainValue?: boolean
   "aria-label"?: string
 }
 
@@ -29,6 +33,8 @@ const StatusSelect = <T extends number>({
   config,
   onChange,
   disabled = false,
+  triggerClassName,
+  plainValue = false,
   "aria-label": ariaLabel,
 }: StatusSelectProps<T>) => {
   const [isPending, setIsPending] = useState(false)
@@ -51,8 +57,12 @@ const StatusSelect = <T extends number>({
       onValueChange={(newVal) => handleChange(newVal)}
       disabled={disabled || isPending || items.length === 0}
     >
-      <SelectTrigger aria-label={ariaLabel}>
-        <StatusBadge value={value} config={config} />
+      <SelectTrigger aria-label={ariaLabel} className={triggerClassName}>
+        {plainValue ? (
+          <span className="truncate">{config[value]?.label ?? value}</span>
+        ) : (
+          <StatusBadge value={value} config={config} />
+        )}
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>

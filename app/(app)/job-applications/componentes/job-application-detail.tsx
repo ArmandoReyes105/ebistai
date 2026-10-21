@@ -8,7 +8,10 @@ import { useState } from "react"
 import ApplicationActionsCard from "./application-actions-card"
 import ApplicationDetailHeader from "./application-detail-header"
 import ApplicationInfoCard from "./application-info-card"
+import ApplicationProgressCard from "./application-progress-card"
+import ApplicationTaiTile from "./application-tai-tile"
 import ApplicationTimeline from "./application-timeline"
+import DeleteApplicationDialog from "./delete-application-dialog"
 import UpdateApplicationDialog from "./update-application-dialog"
 
 interface JobApplicationDetailProps {
@@ -24,10 +27,13 @@ const DetailSkeleton = () => (
     <Skeleton className="h-4 w-48" />
     <Skeleton className="h-8 w-80 max-w-full" />
     <Skeleton className="h-4 w-60 max-w-full" />
-    <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
-      <Skeleton className="h-40 lg:col-span-2" />
-      <Skeleton className="h-32 lg:col-span-2 lg:row-start-2" />
-      <Skeleton className="h-56 lg:col-start-3 lg:row-span-2 lg:row-start-1" />
+    <div className="grid grid-cols-1 gap-4 lg:grid-cols-4">
+      <Skeleton className="h-72 lg:col-span-3" />
+      <Skeleton className="h-72" />
+    </div>
+    <div className="grid grid-cols-1 gap-4 lg:grid-cols-3 lg:items-start">
+      <Skeleton className="h-64 lg:col-span-2 lg:col-start-1 lg:row-start-1" />
+      <Skeleton className="h-64 lg:col-start-3 lg:row-start-1" />
     </div>
   </div>
 )
@@ -63,12 +69,15 @@ const JobApplicationDetail = ({ id }: JobApplicationDetailProps) => {
     reload,
     refresh,
     updateEventDate,
+    deleteApplication,
+    isDeleting,
     changeStage,
     changeStatus,
     revive,
     undoEvent,
   } = useJobApplication(id)
   const [isEditOpen, setIsEditOpen] = useState(false)
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false)
 
   if (loadState === "loading") return <DetailSkeleton />
 
@@ -93,32 +102,49 @@ const JobApplicationDetail = ({ id }: JobApplicationDetailProps) => {
 
   return (
     <div className="flex flex-col gap-4">
-      <ApplicationDetailHeader application={application} />
+      <ApplicationDetailHeader
+        application={application}
+        isDeleting={isDeleting}
+        onEdit={() => setIsEditOpen(true)}
+        onDelete={() => setIsDeleteOpen(true)}
+      />
 
-      {/* Bento layout: details and actions on the left, the history as a
-          tall column on the right. Below lg it stacks in DOM order:
-          details, actions, history. */}
-      <div className="grid grid-cols-1 gap-4 *:*:h-full lg:grid-cols-3 lg:grid-rows-[auto_1fr]">
-        <div className="lg:col-span-2">
+      {/* Row 1: progress (3/4) and the Tai tile (1/4). Row 2: history on the
+          left (2/3), actions over details on the right (1/3). Below lg it
+          stacks in DOM order: progress, Tai, actions, details, history. */}
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-4">
+        <div className="lg:col-span-3">
+          <ApplicationProgressCard
+            application={application}
+            events={events}
+            onStageChange={(stage) => changeStage(application.id, stage)}
+          />
+        </div>
+        <div className="flex flex-col lg:col-span-1">
+          <ApplicationTaiTile application={application} events={events} />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3 lg:items-start">
+        <div className="flex flex-col gap-4 lg:col-start-3 lg:row-start-1">
+          <ApplicationActionsCard
+            application={application}
+            events={events}
+            onStageChange={(stage) => changeStage(application.id, stage)}
+            onStatusChange={(status) => changeStatus(application.id, status)}
+            onRevive={() => revive(application.id)}
+          />
           <ApplicationInfoCard
             application={application}
             onEdit={() => setIsEditOpen(true)}
           />
         </div>
 
-        <div className="lg:col-span-2 lg:row-start-2">
-          <ApplicationActionsCard
-            application={application}
-            onStageChange={(stage) => changeStage(application.id, stage)}
-            onStatusChange={(status) => changeStatus(application.id, status)}
-            onRevive={() => revive(application.id)}
-          />
-        </div>
-
-        <div className="lg:col-start-3 lg:row-span-2 lg:row-start-1">
+        <div className="lg:col-span-2 lg:col-start-1 lg:row-start-1">
           <ApplicationTimeline
             events={events}
             status={application.status}
+            stage={application.stage}
             onUpdateDate={updateEventDate}
             onUndo={(eventId) => undoEvent(application.id, eventId)}
           />
@@ -130,6 +156,13 @@ const JobApplicationDetail = ({ id }: JobApplicationDetailProps) => {
         onOpenChange={setIsEditOpen}
         application={application}
         onCreated={refresh}
+      />
+
+      <DeleteApplicationDialog
+        open={isDeleteOpen}
+        onOpenChange={setIsDeleteOpen}
+        application={application}
+        onConfirm={() => void deleteApplication()}
       />
     </div>
   )

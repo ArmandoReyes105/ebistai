@@ -1,42 +1,28 @@
-import { StatusBadge } from "@/components/status-badge"
-import { Button } from "@/components/ui/button"
-import {
-  Card,
-  CardAction,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
-import { Separator } from "@/components/ui/separator"
 import { modalityBadgeConfig } from "@/lib/components/badge-config"
 import { JobApplication } from "@/types/job-application.types"
-import { SquarePen } from "lucide-react"
-import type { ReactNode } from "react"
 
 interface ApplicationInfoCardProps {
   application: JobApplication
   onEdit: () => void
 }
 
+// "30 sept 2026"
 const formatDate = (value: Date | string) =>
-  new Date(value).toLocaleDateString("es-MX", {
-    day: "2-digit",
-    month: "long",
-    year: "numeric",
-  })
+  new Date(value)
+    .toLocaleDateString("es-MX", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    })
+    .replace(/\./g, "")
 
 const ApplicationInfoCard = ({
   application,
   onEdit,
 }: ApplicationInfoCardProps) => {
-  const items: { label: string; value: ReactNode }[] = [
+  const items = [
     { label: "Fuente", value: application.applicationSource },
-    {
-      label: "Modalidad",
-      value: (
-        <StatusBadge value={application.mode} config={modalityBadgeConfig} />
-      ),
-    },
+    { label: "Modalidad", value: modalityBadgeConfig[application.mode].label },
     {
       label: "Fecha de aplicación",
       value: formatDate(application.dateApplied),
@@ -48,40 +34,42 @@ const ApplicationInfoCard = ({
   ]
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Detalles</CardTitle>
-        <CardAction>
-          <Button variant="outline" size="sm" onClick={onEdit}>
-            <SquarePen data-icon="inline-start" />
-            Editar
-          </Button>
-        </CardAction>
-      </CardHeader>
-      <Separator />
-      <CardContent>
-        <dl className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          {items.map((item) => (
-            <div key={item.label} className="flex flex-col gap-1">
-              <dt className="text-xs text-muted-foreground">{item.label}</dt>
-              <dd className="text-sm">{item.value}</dd>
-            </div>
-          ))}
-          <div className="flex flex-col gap-1 sm:col-span-2">
-            <dt className="text-xs text-muted-foreground">Notas</dt>
-            <dd className="text-sm whitespace-pre-wrap">
-              {application.notes ? (
-                application.notes
-              ) : (
-                <span className="text-muted-foreground">
-                  Aún no tienes notas aquí.
-                </span>
-              )}
-            </dd>
+    <section className="flex flex-col gap-2 border border-border bg-card p-6">
+      <div className="flex items-center justify-between gap-3">
+        <h2 className="text-lg font-semibold">Detalles</h2>
+        <button
+          type="button"
+          onClick={onEdit}
+          className="text-sm font-medium hover:underline"
+        >
+          Editar
+        </button>
+      </div>
+
+      <dl className="flex flex-col">
+        {items.map((item) => (
+          <div
+            key={item.label}
+            className="flex items-baseline justify-between gap-3 border-t border-muted py-3"
+          >
+            <dt className="text-sm text-muted-foreground">{item.label}</dt>
+            <dd className="text-right font-medium">{item.value}</dd>
           </div>
-        </dl>
-      </CardContent>
-    </Card>
+        ))}
+        <div className="flex flex-col gap-2 border-t border-muted py-3">
+          <dt className="text-sm text-muted-foreground">Notas</dt>
+          <dd className="bg-muted px-3.5 py-3 text-[15px] leading-relaxed whitespace-pre-wrap">
+            {application.notes ? (
+              application.notes
+            ) : (
+              <span className="text-muted-foreground">
+                Aún no tienes notas aquí.
+              </span>
+            )}
+          </dd>
+        </div>
+      </dl>
+    </section>
   )
 }
 

@@ -5,6 +5,7 @@ import { getErrorMessage, isNotFoundError } from "@/lib/api/error-messages"
 import { jobApplicationService } from "@/services/job-application-service"
 import { ApplicationEvent, JobApplication } from "@/types/job-application.types"
 import { useAuth } from "@clerk/nextjs"
+import { useRouter } from "next/navigation"
 import { useCallback, useEffect, useState } from "react"
 import { useApplicationActions } from "./use-application-actions"
 
@@ -13,9 +14,11 @@ export type JobApplicationLoadState =
 
 export function useJobApplication(id: string) {
   const { getToken } = useAuth()
+  const router = useRouter()
   const [application, setApplication] = useState<JobApplication | null>(null)
   const [events, setEvents] = useState<ApplicationEvent[]>([])
   const [loadState, setLoadState] = useState<JobApplicationLoadState>("loading")
+  const [isDeleting, setIsDeleting] = useState(false)
 
   // `silent` keeps the page visible while data refreshes in the background.
   const load = useCallback(
@@ -88,6 +91,23 @@ export function useJobApplication(id: string) {
     [getToken, id, handleApplicationChange]
   )
 
+  const deleteApplication = useCallback(async () => {
+    setIsDeleting(true)
+    try {
+      const token = await getToken()
+      await jobApplicationService.delete(id, { token: token ?? undefined })
+      router.push("/job-applications")
+    } catch (error) {
+      console.error(error)
+      toast.add({
+        title: "Uy",
+        description: "No pudimos eliminar la postulación. ¿Le damos otra vez?",
+        type: "error",
+      })
+      setIsDeleting(false)
+    }
+  }, [getToken, id, router])
+
   useEffect(() => {
     void Promise.resolve().then(() => load())
   }, [load])
@@ -99,6 +119,8 @@ export function useJobApplication(id: string) {
     reload: load,
     refresh,
     updateEventDate,
+    deleteApplication,
+    isDeleting,
     changeStage: actions.changeStage,
     changeStatus: actions.changeStatus,
     revive: actions.revive,
