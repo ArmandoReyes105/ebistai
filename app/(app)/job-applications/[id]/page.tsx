@@ -13,7 +13,7 @@ const JobApplicationDetailPage = async ({
   const { id } = await params
 
   return (
-    <div className="mx-auto w-full max-w-6xl px-8 py-4">
+    <div className="w-full px-8 py-4">
       <JobApplicationDetail id={id} />
     </div>
   )

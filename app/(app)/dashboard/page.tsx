@@ -6,7 +6,7 @@ const DashboardPage = async () => {
   const user = await currentUser()
   if (!user) {
     return (
-      <div className="mx-auto w-full max-w-7xl px-8 py-4">
+      <div className="w-full px-8 py-4">
         <p className="text-sm text-muted-foreground">
           Uy, se nos atoró algo al traer tu información. ¿Recargas la página y
           lo intentamos de nuevo?
@@ -16,7 +16,7 @@ const DashboardPage = async () => {
   }
 
   return (
-    <div className="mx-auto w-full max-w-7xl px-8 py-4">
+    <div className="w-full px-8 py-4">
       <Dashboard firstName={user.firstName} />
     </div>
   )
