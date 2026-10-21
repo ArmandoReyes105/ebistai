@@ -19,19 +19,20 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { useApplicationsSummary } from "@/hooks/use-applications-summary"
 import { useJobApplicationFilters } from "@/hooks/use-job-application-filters"
 import { useJobApplicationSources } from "@/hooks/use-job-application-sources"
 import { useJobApplications } from "@/hooks/use-job-applications"
+import { useRadarThreshold } from "@/hooks/use-radar-threshold"
 import { cn } from "@/lib/utils"
 import { JobApplication } from "@/types/job-application.types"
 import {
-  ArrowLeftIcon,
   BriefcaseBusinessIcon,
   SearchXIcon,
   TriangleAlertIcon,
 } from "lucide-react"
-import Link from "next/link"
 import { useEffect, useState } from "react"
+import ApplicationsSummaryTiles from "./applications-summary-tiles"
 import JobApplicationDialog from "./job-application-dialog"
 import JobApplicationFiltersBar from "./job-application-filters"
 import JobApplicationPagination from "./job-application-pagination"
@@ -40,10 +41,31 @@ import { hasActiveFilters } from "@/lib/domain/job-application-query"
 
 const SKELETON_ROWS = 8
 
+// "23 postulaciones · 14 activas", or "8 resultados con filtros" while filtering.
+const countLabel = (
+  count: number,
+  filtered: boolean,
+  activeCount: number | null
+) => {
+  if (filtered) {
+    return `${count} ${count === 1 ? "resultado" : "resultados"} con filtros`
+  }
+  const total = `${count} ${count === 1 ? "postulación" : "postulaciones"}`
+  if (activeCount === null) return total
+  return `${total} · ${activeCount} ${activeCount === 1 ? "activa" : "activas"}`
+}
+
+const headClassName =
+  "px-3 py-4 font-mono text-xs font-medium tracking-wider text-muted-foreground uppercase"
+
 const JobApplicationList = () => {
   const { filters, update, clear } = useJobApplicationFilters()
   const [sourcesVersion, setSourcesVersion] = useState(0)
   const sources = useJobApplicationSources(sourcesVersion)
+  // Fetched once here and passed down; never call it per row.
+  const staleThreshold = useRadarThreshold()
+  const summary = useApplicationsSummary()
+  const reloadSummary = summary.reload
 
   const {
     data,
@@ -58,6 +80,8 @@ const JobApplicationList = () => {
   } = useJobApplications({
     filters,
     onPageEmptied: () => update({ page: Math.max(1, filters.page - 1) }),
+    // Stage/status/revive changes and toast undos move the tile numbers.
+    onApplicationChanged: reloadSummary,
   })
 
   // A URL (or a deletion) can leave us past the last page: step back to it.
@@ -67,15 +91,23 @@ const JobApplicationList = () => {
     if (isPastEnd) update({ page: totalPages })
   }, [isPastEnd, totalPages, update])
 
+  // Each mutation changes the tile numbers: refresh them once it completes.
   const handleCreated = () => {
     setSourcesVersion((v) => v + 1)
     reload()
+    reloadSummary()
   }
 
   const handleUpdated = (updated?: JobApplication) => {
     setSourcesVersion((v) => v + 1)
     if (updated) replaceApplication(updated)
     else reload()
+    reloadSummary()
+  }
+
+  const handleDelete = async (id: string) => {
+    await deleteApplication(id)
+    reloadSummary()
   }
 
   const filtersActive = hasActiveFilters(filters)
@@ -88,23 +120,33 @@ const JobApplicationList = () => {
 
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-4">
-      <div className="flex shrink-0 flex-wrap items-center justify-between gap-2">
-        <div className="flex flex-col">
-          <Link
-            href="/dashboard"
-            className="mb-2 flex w-fit items-center gap-2 text-sm text-muted-foreground hover:text-foreground"
-          >
-            <ArrowLeftIcon className="size-4" />
-            Volver al dashboard
-          </Link>
-          <h1 className="text-2xl font-bold">Mis solicitudes de trabajo</h1>
-          <span className="text-sm text-muted-foreground">
-            Registra cada vacante, filtra tus procesos y mantén su estado al
-            día.
+      <header className="mb-2 flex shrink-0 flex-wrap items-end justify-between gap-4">
+        <div className="flex min-w-0 flex-col gap-2">
+          {/* Reserves its line while loading so the title does not jump. */}
+          <span className="min-h-4 font-mono text-xs tracking-wider text-muted-foreground uppercase tabular-nums">
+            {data &&
+              countLabel(data.totalCount, filtersActive, summary.activeCount)}
           </span>
+          <h1 className="text-3xl leading-none font-semibold tracking-[-0.04em] md:text-4xl">
+            Postulaciones<span className="text-primary">.</span>
+          </h1>
         </div>
         <JobApplicationDialog onCreated={handleCreated} />
-      </div>
+      </header>
+
+      {!noApplicationsAtAll && (
+        <div className="shrink-0">
+          <ApplicationsSummaryTiles
+            attention={summary.attention}
+            activeCount={summary.activeCount}
+            closedCount={summary.closedCount}
+            thresholdDays={summary.thresholdDays}
+            isLoading={summary.isLoading}
+            state={filters.state}
+            onChange={update}
+          />
+        </div>
+      )}
 
       {!noApplicationsAtAll && (
         <div className="shrink-0">
@@ -117,8 +159,10 @@ const JobApplicationList = () => {
         </div>
       )}
 
-      {/* The card is the only thing that grows; the body scrolls, the footer stays. */}
-      <div className="flex min-h-0 flex-1 flex-col">
+      {/* The card is the only thing that grows; the body scrolls, the footer
+          stays. The min-height fits the header, 5 rows (~74px each) and the
+          pagination, so short screens scroll the whole page instead. */}
+      <div className="flex min-h-[32rem] flex-1 flex-col">
         {loadFailed ? (
           <Empty>
             <EmptyHeader>
@@ -174,9 +218,9 @@ const JobApplicationList = () => {
               </Empty>
             ) : (
               <Table
-                containerClassName="min-h-0 flex-1 overflow-auto"
+                containerClassName="scrollbar-ui min-h-0 flex-1 overflow-auto border border-border bg-card"
                 className={cn(
-                  "transition-opacity",
+                  "min-w-[980px] text-[15px] transition-opacity",
                   isFetching && !isInitialLoading && "opacity-60"
                 )}
                 aria-busy={isFetching}
@@ -184,23 +228,30 @@ const JobApplicationList = () => {
                 <TableCaption className="sr-only">
                   Lista de puestos solicitados
                 </TableCaption>
-                <TableHeader className="sticky top-0 z-10 bg-background shadow-[0_1px_0_0_var(--border)]">
-                  <TableRow>
-                    <TableHead>Puesto y Fecha</TableHead>
-                    <TableHead>Compañia</TableHead>
-                    <TableHead>Estado</TableHead>
-                    <TableHead>Etapa</TableHead>
-                    <TableHead>Modalidad</TableHead>
-                    <TableHead>Fuente de Aplicación</TableHead>
-                    <TableHead className="text-end">Opciones</TableHead>
+                <TableHeader className="sticky top-0 z-10 bg-card shadow-[0_1px_0_0_var(--border)]">
+                  <TableRow className="border-b border-border">
+                    <TableHead className={cn(headClassName, "px-5")}>
+                      Puesto
+                    </TableHead>
+                    <TableHead className={headClassName}>Empresa</TableHead>
+                    <TableHead className={headClassName}>Etapa</TableHead>
+                    <TableHead className={headClassName}>Estado</TableHead>
+                    <TableHead className={headClassName}>Modalidad</TableHead>
+                    <TableHead className={headClassName}>Fuente</TableHead>
+                    <TableHead className={cn(headClassName, "px-5 text-right")}>
+                      Último avance
+                    </TableHead>
+                    <TableHead className={cn(headClassName, "w-14 px-0")}>
+                      <span className="sr-only">Opciones</span>
+                    </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {isInitialLoading
                     ? Array.from({ length: SKELETON_ROWS }, (_, i) => (
-                        <TableRow key={i}>
-                          <TableCell colSpan={7}>
-                            <Skeleton className="h-8 w-full" />
+                        <TableRow key={i} className="border-b border-muted">
+                          <TableCell colSpan={8} className="px-5 py-4">
+                            <Skeleton className="h-11 w-full" />
                           </TableCell>
                         </TableRow>
                       ))
@@ -208,10 +259,11 @@ const JobApplicationList = () => {
                         <JobApplicationRow
                           key={jobApplication.id}
                           jobApplication={jobApplication}
+                          staleThreshold={staleThreshold}
                           handleStageChange={changeStage}
                           handleStatusChange={changeStatus}
                           handleRevive={revive}
-                          onDelete={deleteApplication}
+                          onDelete={handleDelete}
                           onUpdated={handleUpdated}
                         />
                       ))}

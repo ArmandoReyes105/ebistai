@@ -52,6 +52,9 @@ const sortItems: { value: SortOption; label: string }[] = [
 // Select value meaning "no source filter".
 const ALL_SOURCES = "all"
 
+// Every control in the bar shares the mockup's 44px height and 14px text.
+const controlClass = "h-11 px-4 text-sm"
+
 interface ChipFilterProps<T extends number> {
   label: string
   options: EnumOption<T>[]
@@ -69,7 +72,9 @@ function ChipFilter<T extends number>({
 }: ChipFilterProps<T>) {
   return (
     <fieldset className="flex flex-col">
-      <legend className="mb-2 text-xs font-medium">{label}</legend>
+      <legend className="mb-2 font-mono text-xs tracking-wider text-muted-foreground uppercase">
+        {label}
+      </legend>
       <ToggleGroup
         multiple
         aria-label={`Filtrar por ${label.toLowerCase()}`}
@@ -84,7 +89,7 @@ function ChipFilter<T extends number>({
           <ToggleGroupItem
             key={o.value}
             value={String(o.value)}
-            className="data-pressed:border-primary data-pressed:bg-primary/10 data-pressed:text-primary"
+            className="h-9 px-3 text-sm data-pressed:border-foreground data-pressed:bg-foreground data-pressed:text-background"
           >
             {o.label}
           </ToggleGroupItem>
@@ -134,16 +139,17 @@ function SearchInput({ initialValue, onSearch }: SearchInputProps) {
   }
 
   return (
-    <div className="relative w-full sm:w-64">
+    // Grows to take the free space; wraps onto its own row when narrow.
+    <div className="relative min-w-0 flex-[1_1_260px]">
       <SearchIcon
         aria-hidden
-        className="pointer-events-none absolute top-1/2 left-2.5 size-3.5 -translate-y-1/2 text-muted-foreground"
+        className="pointer-events-none absolute top-1/2 left-3.5 size-[18px] -translate-y-1/2 text-muted-foreground"
       />
       <Input
         type="search"
         aria-label="Buscar por puesto o empresa"
         placeholder="Buscar puesto o empresa"
-        className="pl-8"
+        className="h-11 border-input pl-10 text-[15px] md:text-[15px]"
         value={text}
         onChange={(e) => handleChange(e.target.value)}
       />
@@ -191,7 +197,7 @@ const JobApplicationFiltersBar = ({
     <div
       role="search"
       aria-label="Filtros de postulaciones"
-      className="flex flex-wrap items-center gap-2"
+      className="flex flex-wrap items-center gap-3 border border-border bg-card p-4"
     >
       <SearchInput
         key={clearCount}
@@ -210,7 +216,11 @@ const JobApplicationFiltersBar = ({
         }}
       >
         {stateItems.map((s) => (
-          <ToggleGroupItem key={s.value} value={s.value}>
+          <ToggleGroupItem
+            key={s.value}
+            value={s.value}
+            className={`${controlClass} border-foreground font-medium data-pressed:bg-foreground data-pressed:text-background`}
+          >
             {s.label}
           </ToggleGroupItem>
         ))}
@@ -221,7 +231,16 @@ const JobApplicationFiltersBar = ({
         value={filters.sort}
         onValueChange={(next) => next && onChange({ sort: next as SortOption })}
       >
-        <SelectTrigger aria-label="Ordenar por">
+        <SelectTrigger
+          aria-label="Ordenar por"
+          className={`${controlClass} gap-2 border-input bg-card data-[size=default]:h-11`}
+        >
+          <span
+            aria-hidden
+            className="font-mono text-xs tracking-wider text-muted-foreground uppercase"
+          >
+            Orden
+          </span>
           <SelectValue />
         </SelectTrigger>
         <SelectContent alignItemWithTrigger={false} align="start">
@@ -236,7 +255,7 @@ const JobApplicationFiltersBar = ({
       </Select>
 
       {hasActiveFilters(filters) && (
-        <Button variant="ghost" onClick={handleClear}>
+        <Button variant="ghost" className={controlClass} onClick={handleClear}>
           <XIcon data-icon="inline-start" />
           Limpiar filtros
         </Button>
@@ -245,7 +264,7 @@ const JobApplicationFiltersBar = ({
       {/* Pushed to the far right; everything else stays on the left. */}
       <Button
         variant="outline"
-        className="ml-auto"
+        className={`${controlClass} ml-auto gap-2 border-input bg-card`}
         aria-label={
           panelCount > 0 ? `Filtros, ${panelCount} activos` : "Filtros"
         }
@@ -254,7 +273,7 @@ const JobApplicationFiltersBar = ({
         <SlidersHorizontalIcon data-icon="inline-start" />
         Filtros
         {panelCount > 0 && (
-          <span className="ml-0.5 inline-flex size-4 items-center justify-center bg-primary text-[10px] font-semibold text-primary-foreground tabular-nums">
+          <span className="inline-flex size-[22px] items-center justify-center bg-foreground text-xs font-semibold text-background tabular-nums">
             {panelCount}
           </span>
         )}
@@ -290,7 +309,10 @@ const JobApplicationFiltersBar = ({
             />
 
             <div className="flex flex-col gap-2">
-              <span id="source-filter-label" className="text-xs font-medium">
+              <span
+                id="source-filter-label"
+                className="font-mono text-xs tracking-wider text-muted-foreground uppercase"
+              >
                 Fuente
               </span>
               <Select
@@ -331,13 +353,16 @@ const JobApplicationFiltersBar = ({
           <SheetFooter className="flex-row border-t">
             <Button
               variant="ghost"
-              className="flex-1"
+              className="h-11 flex-1"
               disabled={!hasActiveFilters(filters)}
               onClick={handleClear}
             >
               Limpiar todo
             </Button>
-            <Button className="flex-1" onClick={() => setIsPanelOpen(false)}>
+            <Button
+              className="h-11 flex-1 bg-foreground font-semibold text-background hover:bg-foreground/90"
+              onClick={() => setIsPanelOpen(false)}
+            >
               Ver resultados
             </Button>
           </SheetFooter>

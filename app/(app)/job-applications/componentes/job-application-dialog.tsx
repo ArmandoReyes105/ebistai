@@ -9,6 +9,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
+import { PlusIcon } from "lucide-react"
 import { useState } from "react"
 import JobApplicationForm from "./job-application-form"
 
@@ -21,7 +22,14 @@ const JobApplicationDialog = ({ onCreated }: JobApplicationDialogProps) => {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger render={<Button>+ Agregar postulación</Button>} />
+      <DialogTrigger
+        render={
+          <Button className="h-12 gap-2.5 bg-foreground px-[22px] text-[15px] font-semibold text-background hover:bg-foreground/90">
+            <PlusIcon className="size-[18px]" />
+            Nueva postulación
+          </Button>
+        }
+      />
 
       <DialogContent className="sm:max-w-120">
         <DialogHeader>

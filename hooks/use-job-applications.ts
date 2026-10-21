@@ -15,11 +15,15 @@ interface UseJobApplicationsOptions {
   filters: JobApplicationFilters
   // Called when a delete leaves a page > 1 empty, so the view can step back.
   onPageEmptied?: () => void
+  // Called after any server-confirmed change to an application (stage,
+  // status, revive, or an undo from the toast), e.g. to refresh totals.
+  onApplicationChanged?: () => void
 }
 
 export function useJobApplications({
   filters,
   onPageEmptied,
+  onApplicationChanged,
 }: UseJobApplicationsOptions) {
   const { getToken } = useAuth()
   const query = toApiQuery(filters)
@@ -30,8 +34,10 @@ export function useJobApplications({
   const [reloadToken, setReloadToken] = useState(0)
 
   const onPageEmptiedRef = useRef(onPageEmptied)
+  const onApplicationChangedRef = useRef(onApplicationChanged)
   useEffect(() => {
     onPageEmptiedRef.current = onPageEmptied
+    onApplicationChangedRef.current = onApplicationChanged
   })
 
   // Refetches the current view (create, conflict, empty page after delete).
@@ -84,8 +90,16 @@ export function useJobApplications({
     )
   }, [])
 
+  const handleApplicationChange = useCallback(
+    (updated: JobApplication) => {
+      replaceApplication(updated)
+      onApplicationChangedRef.current?.()
+    },
+    [replaceApplication]
+  )
+
   const { changeStage, changeStatus, revive } = useApplicationActions({
-    onApplicationChange: replaceApplication,
+    onApplicationChange: handleApplicationChange,
     onStale: reload,
   })
 
