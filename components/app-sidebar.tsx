@@ -2,45 +2,52 @@ import {
   Sidebar,
   SidebarContent,
   SidebarGroup,
-  SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
 } from "./ui/sidebar"
-import Image from "next/image"
 import Link from "next/link"
 import AppSidebarNav from "./app-sidebar-nav"
+import TaiFigure from "./tai/tai-figure"
 
 const AppSidebar = () => {
   return (
-    <Sidebar collapsible="icon">
+    // Dark mode: expanded it blends with the page background; collapsed it
+    // keeps the lighter sidebar tone so the icon rail stands apart.
+    <Sidebar
+      collapsible="icon"
+      className="dark:group-data-[state=expanded]:*:data-[slot=sidebar-inner]:bg-background"
+    >
       <SidebarHeader className="h-12 justify-center border-b border-sidebar-border py-0">
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton
               size="lg"
               render={<Link href="/dashboard" />}
-              className="h-10 p-1 hover:bg-transparent hover:text-sidebar-foreground active:bg-transparent active:text-sidebar-foreground"
+              aria-label="Ebistai, ir al dashboard"
+              className="h-10 gap-2.5 p-1 hover:bg-transparent hover:text-sidebar-foreground active:bg-transparent active:text-sidebar-foreground"
             >
+              {/* Tai, the app's mascot, doubles as the logo. */}
               <div className="flex size-8 shrink-0 items-center justify-center">
-                <Image src="/koi.png" alt="Ebistai logo" width={20} height={20} />
+                <TaiFigure
+                  pose="neutral"
+                  outlined={false}
+                  tight
+                  className="w-7"
+                />
               </div>
-              <div className="grid flex-1 text-left leading-tight">
-                <span className="truncate text-sm font-semibold">Ebistai</span>
-                <span className="truncate text-xs text-muted-foreground">
-                  Job tracker
-                </span>
-              </div>
+              <span className="truncate text-xl font-bold tracking-tight">
+                Ebistai
+              </span>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
 
       <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel>Menú</SidebarGroupLabel>
+        <SidebarGroup className="pt-4">
           <AppSidebarNav />
         </SidebarGroup>
       </SidebarContent>
