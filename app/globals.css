@@ -18,6 +18,11 @@
     --color-sidebar-primary: var(--sidebar-primary);
     --color-sidebar-foreground: var(--sidebar-foreground);
     --color-sidebar: var(--sidebar);
+    --color-ramp-4: var(--ramp-4);
+    --color-ramp-3: var(--ramp-3);
+    --color-ramp-2: var(--ramp-2);
+    --color-ramp-1: var(--ramp-1);
+    --color-ramp-0: var(--ramp-0);
     --color-chart-5: var(--chart-5);
     --color-chart-4: var(--chart-4);
     --color-chart-3: var(--chart-3);
@@ -78,6 +83,12 @@
     --chart-3: oklch(0.442 0.017 285.786);
     --chart-4: oklch(0.37 0.013 285.805);
     --chart-5: oklch(0.274 0.006 286.033);
+    /* Activity heatmap: 5 absolute levels (0 = nothing, 4 = 5+ movements). */
+    --ramp-0: oklch(0.92 0.004 286.32);
+    --ramp-1: oklch(0.81 0.01 286);
+    --ramp-2: oklch(0.705 0.015 286.067);
+    --ramp-3: oklch(0.442 0.017 285.786);
+    --ramp-4: oklch(0.141 0.005 285.823);
     /* Square corners everywhere; rounded-full (avatars, dots) is unaffected. */
     --radius: 0rem;
     --sidebar: oklch(0.985 0 0);
@@ -115,6 +126,11 @@
     --chart-3: oklch(0.442 0.017 285.786);
     --chart-4: oklch(0.37 0.013 285.805);
     --chart-5: oklch(0.274 0.006 286.033);
+    --ramp-0: oklch(0.3 0.006 286.033);
+    --ramp-1: oklch(0.4 0.012 285.9);
+    --ramp-2: oklch(0.55 0.016 285.9);
+    --ramp-3: oklch(0.705 0.015 286.067);
+    --ramp-4: oklch(0.985 0 0);
     --sidebar: oklch(0.21 0.006 285.885);
     --sidebar-foreground: oklch(0.985 0 0);
     --sidebar-primary: oklch(0.68 0.23 26.5);
