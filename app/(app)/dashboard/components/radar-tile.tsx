@@ -6,11 +6,12 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty"
+import { daysSinceInstant } from "@/lib/domain/dashboard-format"
 import { scaleDays } from "@/lib/domain/dashboard-metrics"
 import type { JobApplication } from "@/types/job-application.types"
 import { CheckIcon } from "lucide-react"
 import Link from "next/link"
-import RadarRow from "./radar-row"
+import RadarRow, { lastProgressOf } from "./radar-row"
 import { LABEL, SECTION_TITLE } from "./styles"
 
 interface RadarTileProps {
@@ -38,6 +39,14 @@ const RadarTile = ({
   onMarkAsIgnored,
 }: RadarTileProps) => {
   const count = applications.length
+  // The oldest application fills its bar; the others scale against it.
+  const oldestDays = Math.max(
+    0,
+    ...applications.map((application) =>
+      daysSinceInstant(lastProgressOf(application), now, timeZone)
+    )
+  )
+  const scale = scaleDays(thresholdDays, oldestDays)
 
   return (
     <section
@@ -97,6 +106,7 @@ const RadarTile = ({
               application={application}
               position={index + 1}
               thresholdDays={thresholdDays}
+              scale={scale}
               now={now}
               timeZone={timeZone}
               pending={pendingIds.has(application.id)}
@@ -109,8 +119,7 @@ const RadarTile = ({
       <div className="mt-auto flex items-center gap-2 px-4 py-3.5 text-xs text-muted-foreground sm:px-6">
         <span aria-hidden="true" className="h-3 w-0.5 bg-primary" />
         <span>
-          Umbral de {thresholdDays} días · la barra llega a{" "}
-          {scaleDays(thresholdDays)}
+          Umbral de {thresholdDays} días · la barra llega a {scale}
         </span>
       </div>
     </section>

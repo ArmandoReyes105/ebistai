@@ -9,44 +9,48 @@ import {
 } from "./dashboard-metrics"
 
 describe("scaleDays", () => {
-  it("is 30 for thresholds up to 30", () => {
-    expect(scaleDays(7)).toBe(30)
-    expect(scaleDays(30)).toBe(30)
+  it("is the oldest application's days when it passes the threshold", () => {
+    expect(scaleDays(14, 78)).toBe(78)
   })
 
-  it("follows the threshold above 30", () => {
-    expect(scaleDays(45)).toBe(45)
+  it("is the threshold when nothing passes it (the tick stays in range)", () => {
+    expect(scaleDays(14, 0)).toBe(14)
+    expect(scaleDays(14, 10)).toBe(14)
+  })
+
+  it("is never below 1 (never divides by 0)", () => {
+    expect(scaleDays(0, 0)).toBe(1)
+    expect(scaleDays(-5, -3)).toBe(1)
   })
 })
 
 describe("barPercent", () => {
-  it("scales days against 30 when the threshold is small", () => {
-    expect(barPercent(15, 14)).toBe(50)
+  it("fills the oldest application completely", () => {
+    expect(barPercent(78, 78)).toBe(100)
   })
 
-  it("scales against the threshold when it is above 30", () => {
-    expect(barPercent(30, 60)).toBe(50)
+  it("scales the others against the oldest", () => {
+    expect(barPercent(39, 78)).toBe(50)
   })
 
   it("clamps to 0..100", () => {
-    expect(barPercent(90, 14)).toBe(100)
-    expect(barPercent(-3, 14)).toBe(0)
-    expect(barPercent(0, 14)).toBe(0)
+    expect(barPercent(90, 78)).toBe(100)
+    expect(barPercent(-3, 78)).toBe(0)
+    expect(barPercent(0, 78)).toBe(0)
   })
 })
 
 describe("thresholdPercent", () => {
-  it("places a small threshold against the 30-day scale", () => {
-    expect(thresholdPercent(15)).toBe(50)
-    expect(thresholdPercent(30)).toBe(100)
+  it("places the threshold against the scale", () => {
+    expect(thresholdPercent(14, 28)).toBe(50)
   })
 
-  it("is 100 when the threshold is above 30 (it defines the scale)", () => {
-    expect(thresholdPercent(45)).toBe(100)
+  it("is 100 when the threshold defines the scale", () => {
+    expect(thresholdPercent(14, 14)).toBe(100)
   })
 
   it("clamps negative thresholds to 0", () => {
-    expect(thresholdPercent(-5)).toBe(0)
+    expect(thresholdPercent(-5, 30)).toBe(0)
   })
 })
 

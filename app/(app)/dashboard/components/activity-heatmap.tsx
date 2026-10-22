@@ -77,9 +77,9 @@ const ActivityHeatmap = ({ months, today }: ActivityHeatmapProps) => (
                           className={cn(
                             CELL,
                             "cursor-default p-0",
-                            RAMP_CLASS[heatLevel(cell.count)],
-                            cell.date === today &&
-                              "outline-2 outline-offset-1 outline-primary",
+                            cell.date === today
+                              ? "bg-primary"
+                              : RAMP_CLASS[heatLevel(cell.count)],
                             FOCUS_RING
                           )}
                         />

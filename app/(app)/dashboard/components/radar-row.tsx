@@ -17,23 +17,29 @@ interface RadarRowProps {
   // 1-based position in the list.
   position: number
   thresholdDays: number
+  // Bar scale in days, shared by every row (see scaleDays).
+  scale: number
   now: Date
   timeZone: string
   pending: boolean
   onMarkAsIgnored: (id: string) => void
 }
 
+// Inactivity counts from the last stage change; fall back to the apply date.
+export const lastProgressOf = (application: JobApplication) =>
+  application.lastProgressAt ?? application.dateApplied
+
 const RadarRow = ({
   application,
   position,
   thresholdDays,
+  scale,
   now,
   timeZone,
   pending,
   onMarkAsIgnored,
 }: RadarRowProps) => {
-  // Inactivity counts from the last stage change; fall back to the apply date.
-  const lastProgress = application.lastProgressAt ?? application.dateApplied
+  const lastProgress = lastProgressOf(application)
   const days = daysSinceInstant(lastProgress, now, timeZone)
   // /stats sends `stage` as a NUMBER: it indexes the shared config directly.
   const stageLabel = stageBadgeConfig[application.stage].label
@@ -62,11 +68,11 @@ const RadarRow = ({
       <div aria-hidden="true" className="relative col-span-2 mt-2 h-2 bg-muted">
         <span
           className="absolute inset-y-0 left-0 bg-foreground"
-          style={{ width: `${barPercent(days, thresholdDays)}%` }}
+          style={{ width: `${barPercent(days, scale)}%` }}
         />
         <span
           className="absolute -top-1 -bottom-1 w-0.5 -translate-x-1/2 bg-primary"
-          style={{ left: `${thresholdPercent(thresholdDays)}%` }}
+          style={{ left: `${thresholdPercent(thresholdDays, scale)}%` }}
         />
       </div>
 
