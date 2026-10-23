@@ -27,7 +27,7 @@ const RAMP_CLASS: Record<HeatLevel, string> = {
   4: "bg-ramp-4",
 }
 
-const CELL = "block size-2.5"
+const CELL = "block size-2.5 rounded-full"
 
 const ActivityHeatmap = ({ months, today }: ActivityHeatmapProps) => (
   <div className="flex min-w-0 flex-col gap-4">
@@ -45,7 +45,7 @@ const ActivityHeatmap = ({ months, today }: ActivityHeatmapProps) => (
             <span className="text-[13px] font-semibold">
               {monthLabel(month.month)}
             </span>
-            <div className="grid grid-cols-7 gap-0.5">
+            <div className="grid grid-cols-7 gap-1">
               {month.weeks.flat().map((cell, index) => {
                 if (cell === null) {
                   return (
@@ -62,7 +62,7 @@ const ActivityHeatmap = ({ months, today }: ActivityHeatmapProps) => (
                     <span
                       key={cell.date}
                       aria-hidden="true"
-                      className={cn(CELL, "bg-muted/60")}
+                      className={cn(CELL, "border border-ramp-0")}
                     />
                   )
                 }
@@ -101,7 +101,7 @@ const ActivityHeatmap = ({ months, today }: ActivityHeatmapProps) => (
         <span
           key={level}
           aria-hidden="true"
-          className={cn("size-2", RAMP_CLASS[level])}
+          className={cn("size-2 rounded-full", RAMP_CLASS[level])}
         />
       ))}
       <span>Más</span>

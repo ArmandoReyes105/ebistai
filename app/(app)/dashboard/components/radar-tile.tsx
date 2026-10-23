@@ -9,10 +9,15 @@ import {
 import { daysSinceInstant } from "@/lib/domain/dashboard-format"
 import { scaleDays } from "@/lib/domain/dashboard-metrics"
 import type { JobApplication } from "@/types/job-application.types"
+import { cn } from "cn"
 import { CheckIcon } from "lucide-react"
 import Link from "next/link"
 import RadarRow, { lastProgressOf } from "./radar-row"
-import { LABEL, SECTION_TITLE } from "./styles"
+import { FOCUS_RING, LABEL, SECTION_TITLE } from "./styles"
+
+// The list is capped at max-h-68 (272px), about one and a half rows of ~180px.
+// The footer hints at scrolling when there is more than one row.
+const SCROLL_HINT_FROM = 1
 
 interface RadarTileProps {
   applications: JobApplication[]
@@ -53,7 +58,7 @@ const RadarTile = ({
       aria-labelledby="radar-title"
       className="flex min-w-0 flex-col border border-border bg-card"
     >
-      <div className="flex items-stretch border-b border-foreground">
+      <div className="flex items-stretch border-b border-border">
         <div className="relative flex w-28 shrink-0 items-center justify-center border-r border-border bg-muted py-3 sm:w-32">
           <TaiFigure
             pose={count > 0 ? "neutral" : "sleep"}
@@ -99,28 +104,40 @@ const RadarTile = ({
           </EmptyHeader>
         </Empty>
       ) : (
-        <ul className="flex flex-col px-4 sm:px-6">
-          {applications.map((application, index) => (
-            <RadarRow
-              key={application.id}
-              application={application}
-              position={index + 1}
-              thresholdDays={thresholdDays}
-              scale={scale}
-              now={now}
-              timeZone={timeZone}
-              pending={pendingIds.has(application.id)}
-              onMarkAsIgnored={onMarkAsIgnored}
-            />
-          ))}
-        </ul>
+        // Capped height so a long radar scrolls inside the tile instead of
+        // stretching the whole first row of the grid.
+        <div
+          role="region"
+          aria-label="Postulaciones en el radar"
+          tabIndex={0}
+          className={cn("scrollbar-ui scroll-shadow-y max-h-68 overflow-y-auto [--scrollbar-track:var(--color-card)]", FOCUS_RING)}
+        >
+          <ul className="flex flex-col px-4 sm:px-6">
+            {applications.map((application, index) => (
+              <RadarRow
+                key={application.id}
+                application={application}
+                position={index + 1}
+                thresholdDays={thresholdDays}
+                scale={scale}
+                now={now}
+                timeZone={timeZone}
+                pending={pendingIds.has(application.id)}
+                onMarkAsIgnored={onMarkAsIgnored}
+              />
+            ))}
+          </ul>
+        </div>
       )}
 
-      <div className="mt-auto flex items-center gap-2 px-4 py-3.5 text-xs text-muted-foreground sm:px-6">
+      <div className="mt-auto flex flex-wrap items-center gap-x-2 gap-y-1 px-4 py-3.5 text-xs text-muted-foreground sm:px-6">
         <span aria-hidden="true" className="h-3 w-0.5 bg-primary" />
         <span>
           Umbral de {thresholdDays} días · la barra llega a {scale}
         </span>
+        {count > SCROLL_HINT_FROM && (
+          <span className="ml-auto">Desliza para ver las {count}</span>
+        )}
       </div>
     </section>
   )

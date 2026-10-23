@@ -148,7 +148,9 @@ const Dashboard = ({ initialStats, initialActivity }: DashboardProps) => {
             {(activity) => (
               <ResponseTile
                 median={activity.medianDaysToFirstResponse}
-                rate={activity.responseRate30d}
+                rate={activity.responseRate}
+                responded={activity.respondedCount}
+                total={activity.applicationsCount}
               />
             )}
           </AsyncBoundary>

@@ -1,8 +1,9 @@
 import { describe, expect, it } from "vitest"
 import {
   barPercent,
-  formatMedian,
   formatRate,
+  formatResponseSummary,
+  formatResponseTime,
   pct,
   scaleDays,
   thresholdPercent,
@@ -68,18 +69,6 @@ describe("pct", () => {
   })
 })
 
-describe("formatMedian", () => {
-  it("shows an em dash when there is no median", () => {
-    expect(formatMedian(null)).toBe("—")
-  })
-
-  it("rounds the API's 1-decimal value to an integer", () => {
-    expect(formatMedian(4.4)).toBe("4")
-    expect(formatMedian(4.5)).toBe("5")
-    expect(formatMedian(0)).toBe("0")
-  })
-})
-
 describe("formatRate", () => {
   it("returns null when there is no rate (the line is omitted)", () => {
     expect(formatRate(null)).toBeNull()
@@ -88,5 +77,62 @@ describe("formatRate", () => {
   it("returns the integer percent without a symbol", () => {
     expect(formatRate(62)).toBe(62)
     expect(formatRate(0)).toBe(0)
+  })
+})
+
+describe("formatResponseSummary", () => {
+  it("emphasizes the counts and uses plural forms for several applications", () => {
+    expect(formatResponseSummary(10, 29)).toEqual({
+      before: "",
+      strong: "10 de 29 postulaciones",
+      after: " te han respondido.",
+    })
+  })
+
+  it("uses the singular noun when there is one application", () => {
+    expect(formatResponseSummary(1, 1)).toEqual({
+      before: "",
+      strong: "1 de 1 postulación",
+      after: " te ha respondido.",
+    })
+    expect(formatResponseSummary(0, 1)).toEqual({
+      before: "",
+      strong: "0 de 1 postulación",
+      after: " te han respondido.",
+    })
+  })
+
+  it("uses the singular verb when exactly one responded", () => {
+    expect(formatResponseSummary(1, 5).after).toBe(" te ha respondido.")
+  })
+
+  it("uses the plural verb when none responded", () => {
+    expect(formatResponseSummary(0, 4).after).toBe(" te han respondido.")
+  })
+})
+
+describe("formatResponseTime", () => {
+  it("is null when there is no median yet", () => {
+    expect(formatResponseTime(null)).toBeNull()
+  })
+
+  it("emphasizes the median rounded to whole days", () => {
+    expect(formatResponseTime(6.4)).toEqual({
+      before: "Las empresas suelen tardar ",
+      strong: "6 días",
+      after: " en responderte.",
+    })
+  })
+
+  it("uses the singular for one day", () => {
+    expect(formatResponseTime(1.2)?.strong).toBe("1 día")
+  })
+
+  it("says the same day when the median rounds to zero", () => {
+    expect(formatResponseTime(0.3)).toEqual({
+      before: "Las empresas suelen responderte ",
+      strong: "el mismo día",
+      after: ".",
+    })
   })
 })

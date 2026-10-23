@@ -212,10 +212,11 @@
 
 /* Thin, square scrollbar in the UI's neutral palette, for in-page scroll
    areas (tables, panels). Firefox and Chromium read scrollbar-color; the
-   ::-webkit-* rules cover Safari. */
+   ::-webkit-* rules cover Safari. Set --scrollbar-track on the element to
+   change the track color (it defaults to muted). */
 @utility scrollbar-ui {
   scrollbar-width: thin;
-  scrollbar-color: var(--color-muted-foreground) var(--color-muted);
+  scrollbar-color: var(--color-muted-foreground) var(--scrollbar-track, var(--color-muted));
 
   &::-webkit-scrollbar {
     width: 6px;
@@ -223,7 +224,7 @@
   }
   &::-webkit-scrollbar-track,
   &::-webkit-scrollbar-corner {
-    background: var(--color-muted);
+    background: var(--scrollbar-track, var(--color-muted));
   }
   &::-webkit-scrollbar-thumb {
     background: var(--color-muted-foreground);
@@ -231,6 +232,22 @@
   &::-webkit-scrollbar-thumb:hover {
     background: var(--color-foreground);
   }
+}
+
+/* Edge fades on a vertical scroll area, without JS. The fades use the page
+   background color. The two card-colored covers scroll with the content
+   (local) and hide the fixed fades (scroll) at each end, so the top fade only
+   shows once scrolled down and the bottom one only while there is more below.
+   The covers (40px) are taller than the fades (14px) so they fully hide them.
+   It paints the card background itself; the rows inside must stay transparent. */
+@utility scroll-shadow-y {
+  --scroll-shadow: var(--color-background);
+  background:
+    linear-gradient(var(--color-card) 30%, transparent) top / 100% 40px no-repeat local,
+    linear-gradient(transparent, var(--color-card) 70%) bottom / 100% 40px no-repeat local,
+    linear-gradient(var(--scroll-shadow), transparent) top / 100% 14px no-repeat scroll,
+    linear-gradient(transparent, var(--scroll-shadow)) bottom / 100% 14px no-repeat scroll,
+    var(--color-card);
 }
 
 /* Application history: a soft highlight that travels down a dotted

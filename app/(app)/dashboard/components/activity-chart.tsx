@@ -17,17 +17,25 @@ interface ActivityChartProps {
 
 const SQUARE = "box-border size-3.5 border-2"
 
+// Days shown when the log column's content box is narrower than 420px, the
+// former min-width of the 14-day grid (14 x 30px). The switch is a container
+// query on the log column (ActivityLog), so it never needs a horizontal
+// scroll. The 420px and the column counts are literal in the JSX classes
+// because Tailwind needs full class names.
+export const COMPACT_DAYS = 7
+
 const ActivityChart = ({ days }: ActivityChartProps) => {
   const lastIndex = days.length - 1
+  const firstCompactIndex = days.length - COMPACT_DAYS
 
   return (
     <div
       role="region"
-      aria-label="Gráfica de movimientos de los últimos 14 días"
+      aria-label="Gráfica de movimientos recientes"
       tabIndex={0}
       className={cn("scrollbar-ui overflow-x-auto pb-2", FOCUS_RING)}
     >
-      <ul className="grid min-w-[420px] grid-cols-[repeat(14,minmax(28px,1fr))] items-end">
+      <ul className="grid grid-cols-[repeat(7,minmax(28px,1fr))] items-end @min-[420px]:grid-cols-[repeat(14,minmax(28px,1fr))]">
         {days.map((day, index) => {
           const today = index === lastIndex
           const { squares, overflow } = layoutDaySlots(
@@ -43,7 +51,14 @@ const ActivityChart = ({ days }: ActivityChartProps) => {
           const dayNumber = Number(day.date.slice(8))
 
           return (
-            <li key={day.date} className="flex justify-center">
+            <li
+              key={day.date}
+              className={cn(
+                "flex justify-center",
+                // Hidden (and out of the a11y tree) in the compact week view.
+                index < firstCompactIndex && "hidden @min-[420px]:flex"
+              )}
+            >
               <Tooltip>
                 <TooltipTrigger
                   render={

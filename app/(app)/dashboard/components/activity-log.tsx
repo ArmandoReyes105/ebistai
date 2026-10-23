@@ -1,8 +1,9 @@
 import { dayKey } from "@/lib/domain/activity-dates"
 import { build14DayChart, buildMonthGrid } from "@/lib/domain/activity-chart"
 import type { ActivityMovement } from "@/types/stats.types"
+import { cn } from "cn"
 import { useMemo } from "react"
-import ActivityChart from "./activity-chart"
+import ActivityChart, { COMPACT_DAYS } from "./activity-chart"
 import ActivityHeatmap from "./activity-heatmap"
 import { LABEL, SECTION_TITLE } from "./styles"
 
@@ -23,25 +24,33 @@ const ActivityLog = ({ movements, now, timeZone }: ActivityLogProps) => {
     () => buildMonthGrid(movements, now, timeZone),
     [movements, now, timeZone]
   )
-  const total = days.reduce(
-    (sum, day) => sum + day.newCount + day.advanceCount,
-    0
-  )
+  const countMovements = (list: typeof days) =>
+    list.reduce((sum, day) => sum + day.newCount + day.advanceCount, 0)
+  const total = countMovements(days)
+  // A narrow tile shows only the last week (see COMPACT_DAYS in the chart).
+  const compactTotal = countMovements(days.slice(-COMPACT_DAYS))
+  const movementsLabel = (count: number) =>
+    `${count} ${count === 1 ? "movimiento" : "movimientos"}`
 
   return (
     <section
       aria-labelledby="log-title"
-      className="grid min-w-0 border border-border bg-card 2xl:grid-cols-4"
+      // Side by side from xl: the heatmap takes its natural width (auto) and the
+      // 14-day chart the rest. Below xl they stack, since both don't fit.
+      className="grid min-w-0 border border-border bg-card xl:grid-cols-[minmax(0,1fr)_auto]"
     >
-      <div className="flex min-w-0 flex-col gap-5 border-b border-border p-6 sm:px-7 2xl:col-span-3 2xl:border-r 2xl:border-b-0">
+      {/* @container: the chart switches to 7 days by this column's width, not the window's. */}
+      <div className="@container flex min-w-0 flex-col gap-5 border-b border-border p-6 sm:px-7 xl:border-r xl:border-b-0">
         <div className="flex flex-wrap items-baseline justify-between gap-3">
           <div className="flex flex-wrap items-baseline gap-x-3.5 gap-y-1">
             <h2 id="log-title" className={SECTION_TITLE}>
               Registro de actividad
             </h2>
-            <span className={LABEL}>
-              Últimos 14 días · {total}{" "}
-              {total === 1 ? "movimiento" : "movimientos"}
+            <span className={cn(LABEL, "@min-[420px]:hidden")}>
+              Últimos {COMPACT_DAYS} días · {movementsLabel(compactTotal)}
+            </span>
+            <span className={cn(LABEL, "hidden @min-[420px]:inline")}>
+              Últimos 14 días · {movementsLabel(total)}
             </span>
           </div>
           <div className="flex items-center gap-4 text-[13px] text-muted-foreground">

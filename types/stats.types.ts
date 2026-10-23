@@ -45,7 +45,9 @@ export interface ActivityEvent {
 export interface ActivityStats {
     movements: ActivityMovement[]
     medianDaysToFirstResponse: number | null
-    responseRate30d: number | null
+    responseRate: number | null
+    respondedCount: number
+    applicationsCount: number
     conversion: StageConversion[]
     recentEvents: ActivityEvent[]
-}
+}

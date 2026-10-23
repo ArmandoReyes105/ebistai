@@ -17,6 +17,16 @@ const labelFor = (name: string): string => {
   }
 }
 
+// One color per stage, in flow order: a neutral ramp that darkens as the
+// process advances, and the brand red for the last stage (Offer). Full class
+// names so Tailwind generates them.
+const STAGE_COLORS = ["bg-ramp-1", "bg-ramp-2", "bg-ramp-3", "bg-ramp-4"]
+
+const colorFor = (index: number, lastIndex: number): string =>
+  index === lastIndex
+    ? "bg-primary"
+    : STAGE_COLORS[Math.min(index, STAGE_COLORS.length - 1)]
+
 // Reach per stage, in the order received. Counts and percents come ready from
 // the API (0 / 0% when there are no applications, never NaN).
 const StageConversion = ({ conversion }: StageConversionProps) => {
@@ -38,8 +48,16 @@ const StageConversion = ({ conversion }: StageConversionProps) => {
         {conversion.map((item, index) => (
           <li key={item.stage} className="flex min-w-0 flex-col gap-1.5">
             <span
-              className={cn(LABEL, index === lastIndex && "text-primary-text")}
+              className={cn(
+                LABEL,
+                "inline-flex items-center gap-2",
+                index === lastIndex && "text-primary-text"
+              )}
             >
+              <span
+                aria-hidden="true"
+                className={cn("size-2.5", colorFor(index, lastIndex))}
+              />
               {String(index + 1).padStart(2, "0")}
             </span>
             <span className="text-3xl font-medium tracking-tight tabular-nums">
@@ -50,10 +68,7 @@ const StageConversion = ({ conversion }: StageConversionProps) => {
             </span>
             <div aria-hidden="true" className="h-1.5 bg-muted">
               <div
-                className={cn(
-                  "h-full",
-                  index === lastIndex ? "bg-primary" : "bg-foreground"
-                )}
+                className={cn("h-full", colorFor(index, lastIndex))}
                 style={{ width: `${Math.min(100, Math.max(0, item.pct))}%` }}
               />
             </div>

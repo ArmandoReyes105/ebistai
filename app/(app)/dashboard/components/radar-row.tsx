@@ -81,7 +81,7 @@ const RadarRow = ({
           variant="outline"
           disabled={pending}
           onClick={() => onMarkAsIgnored(application.id)}
-          className="min-h-11 gap-2 px-4 text-sm"
+          className="h-9 gap-2 px-3.5 text-sm pointer-coarse:h-11"
         >
           {pending && <Spinner aria-label="Marcando como ignorada" />}
           Marcar como ignorada
@@ -91,7 +91,7 @@ const RadarRow = ({
           nativeButton={false}
           render={<Link href={`/job-applications/${application.id}`} />}
           aria-label={`Ver postulación de ${application.company}`}
-          className="size-11"
+          className="size-9 pointer-coarse:size-11"
         >
           <ArrowUpRightIcon />
         </Button>
