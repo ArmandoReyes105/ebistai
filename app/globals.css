@@ -150,6 +150,12 @@
     }
   html {
     @apply font-sans;
+    /* Page scrollbar: neutral thumb on the page background, in both themes. */
+    scrollbar-color: var(--color-muted-foreground) var(--color-background);
+    }
+  html::-webkit-scrollbar-track,
+  html::-webkit-scrollbar-corner {
+    background: var(--color-background);
     }
 }
 
