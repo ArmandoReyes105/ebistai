@@ -1,34 +1,36 @@
-import HeroPreview from "./hero-preview"
+import HeroChat from "./hero-chat"
 import Reveal from "./reveal"
 import SignupCta from "./signup-cta"
 
 const HeroSection = () => {
   return (
-    <section className="mx-auto flex w-full max-w-6xl flex-col items-center gap-12 px-4 pt-24 pb-24 text-center sm:px-8">
-      <div className="flex flex-col items-center gap-6">
-        <Reveal className="flex flex-col items-center gap-6">
-          <h1 className="max-w-170 bg-linear-to-r from-foreground to-muted-foreground bg-clip-text pb-1 text-4xl font-bold tracking-tight text-balance text-transparent sm:text-5xl lg:text-6xl">
-            Deja el Excel. Ve toda tu búsqueda de trabajo en un solo lugar.
-          </h1>
-          <p className="max-w-170 text-lg text-pretty text-muted-foreground">
-            Ebistai es un tablero visual para tus postulaciones. Registra cada
-            una, muévela por etapas y deja que el radar te avise cuando una
-            vacante se queda sin respuesta.
-          </p>
-        </Reveal>
-        <Reveal delay={150} className="flex flex-col items-center gap-4">
-          <SignupCta />
-          <p className="max-w-md text-sm text-pretty text-muted-foreground">
-            Nació de una búsqueda de trabajo real, la de quien lo creó, para
-            dejar de depender de un Excel.
-          </p>
-        </Reveal>
-      </div>
-      <Reveal delay={300} className="flex w-full flex-col items-center gap-3">
-        <HeroPreview />
-        <p className="text-xs text-muted-foreground">
-          Vista de ejemplo con datos ficticios.
+    <section
+      aria-labelledby="hero-title"
+      className="mx-auto grid w-full max-w-6xl items-center gap-12 px-4 pt-32 pb-16 sm:px-8 lg:grid-cols-2 lg:gap-12 lg:pt-40 lg:pb-24"
+    >
+      <Reveal className="flex flex-col gap-6">
+        <span className="flex items-center gap-2 font-mono text-xs tracking-wider text-muted-foreground uppercase">
+          <span aria-hidden="true" className="size-2 bg-primary" />
+          Servidor MCP · funciona con Claude
+        </span>
+        <h1
+          id="hero-title"
+          className="max-w-170 bg-linear-to-r from-foreground to-muted-foreground bg-clip-text pb-1 text-4xl font-semibold tracking-tight text-balance text-transparent sm:text-5xl lg:text-6xl"
+        >
+          Pregúntale a tu IA cómo va tu búsqueda de trabajo
+          <span className="text-primary-text">.</span>
+        </h1>
+        <p className="max-w-170 text-base text-pretty text-muted-foreground sm:text-lg">
+          Ebistai guarda cada postulación con su historial y la conecta con tu
+          propia IA. Pregúntale qué vacantes se quedaron en silencio, cómo vas
+          este mes o pídele que registre una vacante desde su enlace.
         </p>
+        <div className="border-t border-foreground pt-6">
+          <SignupCta />
+        </div>
+      </Reveal>
+      <Reveal delay={150}>
+        <HeroChat />
       </Reveal>
     </section>
   )

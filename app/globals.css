@@ -282,3 +282,13 @@
     display: none;
   }
 }
+
+/* Diagonal hatch band on red surfaces (landing). Ink color follows the
+   primary-foreground token, so it adapts to both themes. */
+.landing-hatch {
+  background-image: repeating-linear-gradient(
+    135deg,
+    var(--primary-foreground) 0 2px,
+    transparent 2px 9px
+  );
+}

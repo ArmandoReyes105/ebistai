@@ -1,59 +1,85 @@
-import { CircleCheck, CircleX } from "lucide-react"
+import { Check, X } from "lucide-react"
 import Reveal from "./reveal"
+import SectionHeader from "./section-header"
 
 const BEFORE = [
-  "Una fila por postulación y columnas que nadie actualiza.",
+  "Copias y pegas filas en el chat cada vez que quieres un análisis.",
   "No sabes cuáles llevan semanas sin respuesta.",
   "La etapa de cada proceso vive solo en tu memoria.",
 ]
 
 const AFTER = [
-  "Cada postulación guarda título, empresa, enlace, fuente, modalidad, fecha y notas.",
-  "El radar te muestra las que se quedaron en silencio.",
-  "Cada proceso avanza por etapas que puedes ver de un vistazo.",
+  "Tu IA consulta tus postulaciones, sus etapas y tus notas cuando se lo pides.",
+  "El radar le dice cuáles se quedaron en silencio.",
+  "Le pasas el enlace de una vacante y la registra por ti.",
 ]
 
 const ProblemSection = () => {
   return (
-    <section className="mx-auto flex w-full max-w-6xl flex-col gap-12 px-4 py-24 sm:px-8">
-      <Reveal className="flex max-w-170 flex-col gap-4">
-        <h2 className="text-3xl font-bold tracking-tight text-balance sm:text-4xl">
-          Tu búsqueda no cabe en una hoja de cálculo
-        </h2>
-        <p className="text-base text-pretty text-muted-foreground">
-          Mandas decenas de postulaciones y casi nadie responde. Cuando abres
-          el Excel ya no recuerdas cuál sigue vivo. Ebistai pone todo en un
-          tablero para que sepas dónde estás parado.
-        </p>
+    <section
+      aria-labelledby="problem-title"
+      className="mx-auto flex w-full max-w-6xl flex-col gap-10 px-4 py-16 sm:px-8 sm:py-24"
+    >
+      <Reveal>
+        <SectionHeader
+          eyebrow="01 · El problema"
+          titleId="problem-title"
+          title="Tu IA no puede ayudarte con lo que no ve"
+          description="Mandas decenas de postulaciones y casi nadie responde. Tu búsqueda vive en un Excel que nadie actualiza, y cada vez que quieres un análisis terminas copiando y pegando filas en el chat."
+        />
       </Reveal>
-      <div className="grid gap-6 md:grid-cols-2">
+      <div className="grid gap-4 md:grid-cols-2">
         <Reveal className="h-full">
-          <div className="flex h-full flex-col gap-4 rounded-2xl border bg-card p-6">
-            <h3 className="text-xl font-semibold">Con el Excel</h3>
-            <ul className="flex flex-col gap-3">
+          <article
+            aria-labelledby="before-title"
+            className="flex h-full flex-col gap-6 border bg-card p-6 sm:p-8"
+          >
+            <h3
+              id="before-title"
+              className="text-xl font-semibold text-muted-foreground"
+            >
+              Con el Excel
+            </h3>
+            <ul className="flex flex-col">
               {BEFORE.map((item) => (
-                <li key={item} className="flex items-start gap-3">
-                  <CircleX className="mt-1 size-4 shrink-0 text-muted-foreground" />
-                  <span className="text-base text-pretty text-muted-foreground">
-                    {item}
-                  </span>
+                <li
+                  key={item}
+                  className="flex items-start gap-3 border-t py-4 text-base text-pretty text-muted-foreground"
+                >
+                  <X aria-hidden="true" className="mt-1 size-4 shrink-0" />
+                  <span>{item}</span>
                 </li>
               ))}
             </ul>
-          </div>
+          </article>
         </Reveal>
         <Reveal delay={150} className="h-full">
-          <div className="flex h-full flex-col gap-4 rounded-2xl border border-primary bg-card p-6">
-            <h3 className="text-xl font-semibold">Con Ebistai</h3>
-            <ul className="flex flex-col gap-3">
+          <article
+            aria-labelledby="after-title"
+            className="flex h-full flex-col gap-6 bg-foreground p-6 text-background sm:p-8"
+          >
+            <h3
+              id="after-title"
+              className="flex items-center gap-2 text-xl font-semibold"
+            >
+              <span aria-hidden="true" className="size-2 bg-primary" />
+              Con Ebistai y tu IA
+            </h3>
+            <ul className="flex flex-col">
               {AFTER.map((item) => (
-                <li key={item} className="flex items-start gap-3">
-                  <CircleCheck className="mt-1 size-4 shrink-0 text-primary" />
-                  <span className="text-base text-pretty">{item}</span>
+                <li
+                  key={item}
+                  className="flex items-start gap-3 border-t border-background/20 py-4 text-base text-pretty"
+                >
+                  <Check
+                    aria-hidden="true"
+                    className="mt-1 size-4 shrink-0 text-primary"
+                  />
+                  <span>{item}</span>
                 </li>
               ))}
             </ul>
-          </div>
+          </article>
         </Reveal>
       </div>
     </section>

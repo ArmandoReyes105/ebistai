@@ -2,6 +2,7 @@ import Image from "next/image"
 import Link from "next/link"
 
 const FOOTER_LINKS = [
+  { href: "/#preguntale", label: "Qué le preguntas" },
   { href: "/#como-funciona", label: "Cómo funciona" },
   { href: "/#radar", label: "Radar" },
 ]

@@ -1,16 +1,16 @@
 import type { Metadata } from "next"
-import BenefitsSection from "./components/benefits-section"
-import ComingSoonSection from "./components/coming-soon-section"
+import AsksSection from "./components/asks-section"
 import FinalCtaSection from "./components/final-cta-section"
 import HeroSection from "./components/hero-section"
 import HowItWorksSection from "./components/how-it-works-section"
 import ProblemSection from "./components/problem-section"
 import RadarSection from "./components/radar-section"
 import TaglineRevealSection from "./components/tagline-reveal-section"
+import TrustSection from "./components/trust-section"
 
-const TITLE = "Ebistai: controla tus postulaciones y detecta el ghosting"
+const TITLE = "Ebistai: pregúntale a tu IA cómo va tu búsqueda de trabajo"
 const DESCRIPTION =
-  "Deja el Excel. Registra tus postulaciones, muévelas por etapas y deja que el radar te avise cuáles se quedaron sin respuesta. Beta privada y gratis."
+  "Ebistai guarda cada postulación con su historial y la conecta con tu propia IA por MCP. Pregúntale qué vacantes se quedaron en silencio. Beta privada y gratis."
 
 export const metadata: Metadata = {
   title: TITLE,
@@ -35,11 +35,11 @@ const LandingPage = () => {
     <>
       <HeroSection />
       <ProblemSection />
-      <BenefitsSection />
+      <AsksSection />
       <HowItWorksSection />
       <TaglineRevealSection />
+      <TrustSection />
       <RadarSection />
-      <ComingSoonSection />
       <FinalCtaSection />
     </>
   )
