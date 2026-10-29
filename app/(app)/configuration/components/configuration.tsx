@@ -15,6 +15,7 @@ import { useRadarCount } from "@/hooks/use-radar-count"
 import { useEffect, useRef } from "react"
 import AccountTile from "./account-tile"
 import AutoIgnoreTile from "./auto-ignore-tile"
+import DataTile from "./data-tile"
 import RadarTile from "./radar-tile"
 import ThemeTile from "./theme-tile"
 
@@ -67,6 +68,7 @@ const Configuration = () => {
         />
         <ThemeTile />
         <AccountTile />
+        <DataTile />
       </div>
 
       <AlertDialog

@@ -8,10 +8,8 @@ export interface RequestOptions extends Omit<RequestInit, "body"> {
   token?: string
 }
 
-async function request<T>(
-  path: string,
-  options: RequestOptions = {}
-): Promise<T> {
+// Sends the request and throws ApiError on a non-2xx answer; callers read the body.
+async function send(path: string, options: RequestOptions): Promise<Response> {
   const { params, headers, body, token, ...rest } = options
 
   const url = new URL(path, BASE_URL)
@@ -36,6 +34,15 @@ async function request<T>(
     throw new ApiError(res.status, res.statusText, errorBody)
   }
 
+  return res
+}
+
+async function request<T>(
+  path: string,
+  options: RequestOptions = {}
+): Promise<T> {
+  const res = await send(path, options)
+
   if (res.status === 204) return undefined as T
 
   // Tolerate 200/201 responses with an empty body instead of failing on json().
@@ -48,6 +55,10 @@ async function request<T>(
 export const apiClient = {
   get: <T>(path: string, options?: RequestOptions) =>
     request<T>(path, { ...options, method: "GET" }),
+
+  // Binary downloads (e.g. the Excel export): the body is returned untouched.
+  getBlob: async (path: string, options?: RequestOptions) =>
+    (await send(path, { ...options, method: "GET" })).blob(),
 
   post: <T>(path: string, body?: unknown, options?: RequestOptions) =>
     request<T>(path, { ...options, method: "POST", body }),
