@@ -61,8 +61,9 @@ const RadarTile = ({
       <div className="flex items-stretch border-b border-border">
         <div className="relative flex w-28 shrink-0 items-center justify-center border-r border-border bg-muted py-3 sm:w-32">
           <TaiFigure
-            pose={count > 0 ? "neutral" : "sleep"}
+            pose={count > 0 ? "cold" : "sleep"}
             outlined={false}
+            compact
             className="w-20 sm:w-24"
           />
           {count > 0 && (
@@ -110,7 +111,10 @@ const RadarTile = ({
           role="region"
           aria-label="Postulaciones en el radar"
           tabIndex={0}
-          className={cn("scrollbar-ui scroll-shadow-y max-h-68 overflow-y-auto [--scrollbar-track:var(--color-card)]", FOCUS_RING)}
+          className={cn(
+            "scrollbar-ui max-h-68 overflow-y-auto scroll-shadow-y [--scrollbar-track:var(--color-card)]",
+            FOCUS_RING
+          )}
         >
           <ul className="flex flex-col px-4 sm:px-6">
             {applications.map((application, index) => (

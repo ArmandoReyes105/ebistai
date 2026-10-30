@@ -1,4 +1,4 @@
-import Image from "next/image"
+import TaiFigure from "@/components/tai/tai-figure"
 import { cn } from "@/lib/utils"
 import {
   radarBarPercent,
@@ -58,7 +58,12 @@ const RadarSection = () => {
                 aria-hidden="true"
                 className="relative flex w-24 flex-none items-center justify-center border-r bg-muted p-3 sm:w-32"
               >
-                <Image src="/koi.png" alt="" width={72} height={72} />
+                <TaiFigure
+                  pose="cold"
+                  outlined={false}
+                  compact
+                  className="w-[72px]"
+                />
                 <span className="absolute top-2 right-2 flex h-6 min-w-6 items-center justify-center bg-primary px-1 text-sm font-bold text-primary-foreground">
                   {RADAR_ROWS.length}
                 </span>

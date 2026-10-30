@@ -35,6 +35,7 @@ const AppSidebar = () => {
                   pose="neutral"
                   outlined={false}
                   tight
+                  idle="blink"
                   className="w-7"
                 />
               </div>

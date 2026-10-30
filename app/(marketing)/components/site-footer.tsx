@@ -1,5 +1,6 @@
-import Image from "next/image"
 import Link from "next/link"
+
+import TaiFigure from "@/components/tai/tai-figure"
 
 const FOOTER_LINKS = [
   { href: "/#preguntale", label: "Qué le preguntas" },
@@ -12,7 +13,13 @@ const SiteFooter = () => {
     <footer className="border-t">
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 py-12 sm:flex-row sm:items-center sm:justify-between sm:px-8">
         <div className="flex items-center gap-3">
-          <Image src="/koi.png" alt="Ebistai" width={24} height={24} />
+          <TaiFigure
+            pose="neutral"
+            outlined={false}
+            tight
+            idle="blink"
+            className="w-6"
+          />
           <p className="text-sm text-muted-foreground">
             Ebistai, en beta privada.
           </p>

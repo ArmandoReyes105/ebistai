@@ -52,7 +52,13 @@ const SiteNav = () => {
             className="flex items-center gap-2.5 outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
             {/* Tai, the app's mascot, doubles as the logo. */}
-            <TaiFigure pose="neutral" outlined={false} tight className="w-7" />
+            <TaiFigure
+              pose="neutral"
+              outlined={false}
+              tight
+              idle="blink"
+              className="w-7"
+            />
             <span className="text-xl font-bold tracking-tight">Ebistai</span>
           </Link>
 

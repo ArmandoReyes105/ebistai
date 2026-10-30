@@ -3,6 +3,7 @@
 import TaiFigure, { type TaiPose } from "@/components/tai/tai-figure"
 import { useRadarThreshold } from "@/hooks/use-radar-threshold"
 import { daysBetween, lastEventDate } from "@/lib/domain/dates"
+import { taiPoseFor } from "@/lib/domain/tai-pose"
 import { Status } from "@/types/enums"
 import { ApplicationEvent, JobApplication } from "@/types/job-application.types"
 
@@ -25,10 +26,11 @@ const getState = (
   threshold: number
 ): TaiState => {
   const applied = new Date(application.dateApplied)
+  const closed = application.status !== Status.Active
 
-  if (application.status !== Status.Active) {
+  if (closed) {
     return {
-      pose: "sleep",
+      pose: taiPoseFor({ closed, days: 0, threshold }),
       label: "Tai · proceso cerrado",
       days: Math.max(
         0,
@@ -43,9 +45,11 @@ const getState = (
     daysBetween(new Date(application.lastProgressAt ?? applied), new Date())
   )
 
-  if (days >= threshold) {
+  const pose = taiPoseFor({ closed, days, threshold })
+
+  if (pose === "cold") {
     return {
-      pose: "sleep",
+      pose,
       label: "Tai · se está enfriando",
       days,
       caption: "días sin respuesta",
@@ -56,7 +60,7 @@ const getState = (
   if (days === 0) caption = "hoy hubo avance"
   else if (days === 1) caption = "día desde el último avance"
 
-  return { pose: "neutral", label: "Tai · último avance", days, caption }
+  return { pose, label: "Tai · último avance", days, caption }
 }
 
 const ApplicationTaiTile = ({
