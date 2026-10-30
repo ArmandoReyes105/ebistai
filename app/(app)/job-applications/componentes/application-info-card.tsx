@@ -58,7 +58,7 @@ const ApplicationInfoCard = ({
         ))}
         <div className="flex flex-col gap-2 border-t border-muted py-3">
           <dt className="text-sm text-muted-foreground">Notas</dt>
-          <dd className="bg-muted px-3.5 py-3 text-[15px] leading-relaxed whitespace-pre-wrap">
+          <dd className="bg-muted px-3.5 py-3 text-[15px] leading-relaxed whitespace-pre-wrap wrap-anywhere">
             {application.notes ? (
               application.notes
             ) : (
