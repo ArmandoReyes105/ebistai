@@ -29,7 +29,7 @@ export const jobApplicationSchema = z.object({
       .or(z.literal("")),
     notes: z
       .string()
-      .max(500, "Máximo 500 caracteres")
+      .max(4000, "Máximo 4000 caracteres")
       .optional()
       .or(z.literal("")),
 });
