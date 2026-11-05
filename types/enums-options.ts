@@ -25,7 +25,7 @@ export const statusOptions: EnumOption<Status>[] = [
 ]
 
 export const workModeOptions: EnumOption<WorkMode>[] = [
-    { value: WorkMode.Hybrid, label: "Hibrido"},
+    { value: WorkMode.Hybrid, label: "Híbrido"},
     { value: WorkMode.OnSite, label: "Presencial" },
     { value: WorkMode.Remote, label: "Remoto" },
 ]

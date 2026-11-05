@@ -1,14 +1,9 @@
 "use client"
 
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog"
-import UpdateApplicationForm from "./update-application-form"
+import { Dialog, DialogContent } from "@/components/ui/dialog"
 import { JobApplication } from "@/types/job-application.types"
+import ApplicationForm from "./application-form"
+import { APPLICATION_DIALOG_CLASS } from "./application-form-classes"
 
 interface UpdateApplicationDialogProps {
   application: JobApplication | null
@@ -27,15 +22,11 @@ const UpdateApplicationDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-120">
-        <DialogHeader>
-          <DialogTitle>Actualizar solicitud de empleo</DialogTitle>
-          <DialogDescription>
-            Actualiza el puesto al que aplicaste.
-          </DialogDescription>
-        </DialogHeader>
-
-        <UpdateApplicationForm
+      <DialogContent
+        showCloseButton={false}
+        className={APPLICATION_DIALOG_CLASS}
+      >
+        <ApplicationForm
           application={application}
           onSuccess={(updated) => {
             onOpenChange(false)

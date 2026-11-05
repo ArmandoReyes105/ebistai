@@ -4,14 +4,12 @@ import { Button } from "@/components/ui/button"
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { PlusIcon } from "lucide-react"
 import { useState } from "react"
-import JobApplicationForm from "./job-application-form"
+import ApplicationForm from "./application-form"
+import { APPLICATION_DIALOG_CLASS } from "./application-form-classes"
 
 interface JobApplicationDialogProps {
   onCreated?: () => void
@@ -31,15 +29,11 @@ const JobApplicationDialog = ({ onCreated }: JobApplicationDialogProps) => {
         }
       />
 
-      <DialogContent className="sm:max-w-120">
-        <DialogHeader>
-          <DialogTitle>Agregar solicitud de empleo</DialogTitle>
-          <DialogDescription>
-            Registra un nuevo puesto al que aplicaste.
-          </DialogDescription>
-        </DialogHeader>
-
-        <JobApplicationForm
+      <DialogContent
+        showCloseButton={false}
+        className={APPLICATION_DIALOG_CLASS}
+      >
+        <ApplicationForm
           onSuccess={() => {
             setOpen(false)
             onCreated?.()

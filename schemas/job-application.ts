@@ -1,6 +1,8 @@
 import { WorkMode } from "@/types/enums";
 import z from "zod";
 
+export const NOTES_MAX_LENGTH = 4000
+
 export const jobApplicationSchema = z.object({
     jobTitle: z
       .string()
@@ -30,7 +32,7 @@ export const jobApplicationSchema = z.object({
       .or(z.literal("")),
     notes: z
       .string()
-      .max(4000, "Máximo 4000 caracteres")
+      .max(NOTES_MAX_LENGTH, `Máximo ${NOTES_MAX_LENGTH} caracteres`)
       .optional()
       .or(z.literal("")),
 });

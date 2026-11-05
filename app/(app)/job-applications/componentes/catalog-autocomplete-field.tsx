@@ -21,6 +21,10 @@ import { isNewCatalogName } from "@/lib/domain/catalog-name"
 import { JobApplicationFormValues } from "@/schemas/job-application"
 import { useState } from "react"
 import { Control, Controller } from "react-hook-form"
+import {
+  FORM_CONTROL_CLASS,
+  FORM_LABEL_CLASS,
+} from "./application-form-classes"
 
 interface CatalogAutocompleteFieldProps {
   control: Control<JobApplicationFormValues>
@@ -68,7 +72,9 @@ function CatalogAutocompleteBody({
 
   return (
     <Field data-invalid={invalid}>
-      <FieldLabel htmlFor={name}>{label}</FieldLabel>
+      <FieldLabel htmlFor={name} className={FORM_LABEL_CLASS}>
+        {label}
+      </FieldLabel>
       <div>
         <Autocomplete items={items} value={value} onValueChange={onChange}>
           <AutocompleteInput
@@ -80,6 +86,7 @@ function CatalogAutocompleteBody({
             aria-describedby={showHint ? hintId : undefined}
             placeholder={placeholder}
             autoComplete="off"
+            className={FORM_CONTROL_CLASS}
           />
           <AutocompleteContent>
             <AutocompleteList>
