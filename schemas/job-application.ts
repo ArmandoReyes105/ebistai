@@ -5,7 +5,7 @@ export const jobApplicationSchema = z.object({
     jobTitle: z
       .string()
       .min(2, "El puesto debe tener al menos 2 caracteres")
-      .max(100, "El nombre del puesto es demasiado largo"),
+      .max(200, "El nombre del puesto es demasiado largo"),
     company: z
       .string()
       .min(2, "La compañia debe tener al menos 2 caracteres")
@@ -15,6 +15,7 @@ export const jobApplicationSchema = z.object({
         protocol: /^https?$/,
         error: "Ingrese una URL válida (http o https)",
       })
+      .max(500, "La URL es demasiado larga")
       .optional()
       .or(z.literal("")),
     applicationSource: z
