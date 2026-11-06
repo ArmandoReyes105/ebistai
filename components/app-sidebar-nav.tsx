@@ -2,12 +2,13 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Briefcase, LayoutDashboard, Settings } from "lucide-react"
+import { Briefcase, Globe, LayoutDashboard, Settings } from "lucide-react"
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "./ui/sidebar"
 
 const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/job-applications", label: "Postulaciones", icon: Briefcase },
+  { href: "/portals", label: "Portales", icon: Globe },
   { href: "/configuration", label: "Configuración", icon: Settings },
 ]
 

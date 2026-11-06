@@ -16,7 +16,10 @@ export const portalSchema = z.object({
     .max(500, "La URL es demasiado larga"),
   notes: z
     .string()
-    .max(PORTAL_NOTES_MAX_LENGTH, `Máximo ${PORTAL_NOTES_MAX_LENGTH} caracteres`)
+    .max(
+      PORTAL_NOTES_MAX_LENGTH,
+      `Máximo ${PORTAL_NOTES_MAX_LENGTH} caracteres`
+    )
     .optional()
     .or(z.literal("")),
 })
