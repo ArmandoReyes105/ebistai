@@ -95,7 +95,7 @@ const PortalForm = ({
         <Input
           id="portal-name"
           aria-invalid={errors.name !== undefined}
-          placeholder="Ej. Banamex"
+          placeholder="Ej. Portal de la empresa"
           autoComplete="off"
           {...form.register("name")}
         />

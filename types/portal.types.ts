@@ -1,7 +1,11 @@
+import { Stage, Status } from "./enums"
+
 export interface PortalApplication {
   id: string
   jobTitle: string
   company: string
+  status: Status
+  stage: Stage
 }
 
 export interface Portal {

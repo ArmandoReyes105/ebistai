@@ -1,22 +1,23 @@
 "use client"
 
+import {
+  Autocomplete,
+  AutocompleteContent,
+  AutocompleteEmpty,
+  AutocompleteInput,
+  AutocompleteItem,
+  AutocompleteList,
+} from "@/components/ui/autocomplete"
 import { Button } from "@/components/ui/button"
 import { Field, FieldError, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
 import { toast } from "@/components/ui/toast"
 import { usePortals } from "@/hooks/use-portals"
 import { getErrorMessage } from "@/lib/api/error-messages"
+import { findPortalByName } from "@/lib/domain/portal-list"
 import { portalSchema } from "@/schemas/portal"
 import { JobApplicationFormValues } from "@/schemas/job-application"
-import { Plus } from "lucide-react"
+import { Plus, XIcon } from "lucide-react"
 import { KeyboardEvent, useState } from "react"
 import { Control, Controller } from "react-hook-form"
 import {
@@ -25,8 +26,6 @@ import {
   FORM_LABEL_CLASS,
 } from "./application-form-classes"
 
-const NO_PORTAL = "none"
-
 interface PortalFieldProps {
   control: Control<JobApplicationFormValues>
   // Keeps the name visible while the list loads, or if it fails.
@@ -34,19 +33,31 @@ interface PortalFieldProps {
 }
 
 const PortalField = ({ control, current }: PortalFieldProps) => {
-  const { portals, createPortal } = usePortals()
+  const { portals, isLoading, createPortal } = usePortals()
+  const [search, setSearch] = useState(current?.name ?? "")
   const [isAdding, setIsAdding] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
   const [name, setName] = useState("")
   const [url, setUrl] = useState("")
   const [errors, setErrors] = useState<{ name?: string; url?: string }>({})
 
-  const items = [
-    { value: NO_PORTAL, label: "Sin portal" },
-    ...portals.map((portal) => ({ value: portal.id, label: portal.name })),
-  ]
-  if (current && !portals.some((portal) => portal.id === current.id)) {
-    items.push({ value: current.id, label: current.name })
+  const names = portals.map((portal) => portal.name)
+  const isUnknown =
+    !isLoading &&
+    search.trim() !== "" &&
+    search !== current?.name &&
+    !findPortalByName(portals, search)
+
+  function openForm() {
+    if (isUnknown) setName(search.trim())
+    setIsAdding(true)
+  }
+
+  function closeForm() {
+    setIsAdding(false)
+    setName("")
+    setUrl("")
+    setErrors({})
   }
 
   async function addPortal(onCreated: (id: string) => void) {
@@ -61,10 +72,8 @@ const PortalField = ({ control, current }: PortalFieldProps) => {
     try {
       const created = await createPortal(parsed.data)
       onCreated(created.id)
-      setName("")
-      setUrl("")
-      setErrors({})
-      setIsAdding(false)
+      setSearch(created.name)
+      closeForm()
     } catch (error) {
       toast.add({
         title: "Uy",
@@ -94,47 +103,76 @@ const PortalField = ({ control, current }: PortalFieldProps) => {
         return (
           <Field>
             <div className="flex items-center justify-between gap-2">
-              <span id="application-form-portal" className={FORM_LABEL_CLASS}>
+              <FieldLabel htmlFor={field.name} className={FORM_LABEL_CLASS}>
                 Portal de seguimiento
-              </span>
-              <button
-                type="button"
-                onClick={() => setIsAdding((open) => !open)}
-                aria-expanded={isAdding}
-                className="inline-flex items-center gap-1 text-sm font-medium hover:underline"
-              >
-                <Plus className="size-4" />
-                Agregar portal
-              </button>
+              </FieldLabel>
+              {!isAdding && (
+                <button
+                  type="button"
+                  onClick={openForm}
+                  className="inline-flex items-center gap-1 text-sm font-medium hover:underline"
+                >
+                  <Plus className="size-4" />
+                  Agregar portal
+                </button>
+              )}
             </div>
 
-            <Select
-              items={items}
-              value={field.value || NO_PORTAL}
-              onValueChange={(value) =>
-                field.onChange(value === NO_PORTAL ? "" : value)
-              }
+            <Autocomplete
+              items={names}
+              value={search}
+              openOnInputClick
+              onValueChange={(value: string) => {
+                setSearch(value)
+                field.onChange(findPortalByName(portals, value)?.id ?? "")
+              }}
             >
-              <SelectTrigger
-                aria-labelledby="application-form-portal"
-                className={`w-full ${FORM_CONTROL_CLASS}`}
-              >
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  {items.map((item) => (
-                    <SelectItem key={item.value} value={item.value}>
-                      {item.label}
-                    </SelectItem>
-                  ))}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
+              <AutocompleteInput
+                id={field.name}
+                aria-describedby={isUnknown ? "portal-unknown" : undefined}
+                placeholder="Sin portal. Busca por nombre"
+                autoComplete="off"
+                className={FORM_CONTROL_CLASS}
+              />
+              <AutocompleteContent>
+                <AutocompleteEmpty>Sin coincidencias.</AutocompleteEmpty>
+                <AutocompleteList>
+                  {(item: string) => (
+                    <AutocompleteItem key={item} value={item}>
+                      {item}
+                    </AutocompleteItem>
+                  )}
+                </AutocompleteList>
+              </AutocompleteContent>
+            </Autocomplete>
+
+            <div aria-live="polite">
+              {isUnknown && (
+                <p
+                  id="portal-unknown"
+                  className="text-xs text-pretty text-muted-foreground"
+                >
+                  No tienes un portal con ese nombre. La postulación se guardará
+                  sin portal.
+                </p>
+              )}
+            </div>
 
             {isAdding && (
               <div className="flex flex-col gap-3 border border-border p-3">
-                <p className={FORM_CAPTION_CLASS}>Nuevo portal</p>
+                <div className="flex items-center justify-between gap-2">
+                  <p className={FORM_CAPTION_CLASS}>Nuevo portal</p>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    onClick={closeForm}
+                    aria-label="Cerrar sin agregar el portal"
+                    className="size-11 shrink-0"
+                  >
+                    <XIcon className="size-4" />
+                  </Button>
+                </div>
                 <div className="grid gap-3 sm:grid-cols-2">
                   <Field data-invalid={errors.name !== undefined}>
                     <FieldLabel
@@ -149,7 +187,7 @@ const PortalField = ({ control, current }: PortalFieldProps) => {
                       onChange={(event) => setName(event.target.value)}
                       onKeyDown={addOnEnter}
                       aria-invalid={errors.name !== undefined}
-                      placeholder="Ej. Banamex"
+                      placeholder="Ej. Portal de la empresa"
                       autoComplete="off"
                       className={FORM_CONTROL_CLASS}
                     />

@@ -319,7 +319,7 @@ const ApplicationForm = ({ application, onSuccess }: ApplicationFormProps) => {
                 name="applicationSource"
                 kind="sources"
                 label="Fuente"
-                placeholder="Ej. LinkedIn, referido"
+                placeholder="Ej. Bolsa de empleo, referido"
               />
 
               <Controller

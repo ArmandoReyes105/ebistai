@@ -94,13 +94,18 @@ describe("application form portal", () => {
 describe("portal error messages", () => {
   it.each([
     ["portal_url_conflict", 409, "Ya tienes un portal con ese enlace."],
+    ["portal_name_conflict", 409, "Ya tienes un portal con ese nombre."],
     ["portal_not_found", 422, "Ese portal ya no existe. Elige otro."],
     [
       "portal_url_has_credentials",
       422,
       "Quita el usuario o la contraseña del enlace del portal.",
     ],
-    ["invalid_portal_url", 422, "El enlace del portal debe empezar con http:// o https://."],
+    [
+      "invalid_portal_url",
+      422,
+      "El enlace del portal debe empezar con http:// o https://.",
+    ],
   ])("explains %s", (code, status, message) => {
     const error = new ApiError(status, "Error", { code })
 

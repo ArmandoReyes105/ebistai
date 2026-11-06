@@ -19,18 +19,58 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty"
+import { Input } from "@/components/ui/input"
 import { Skeleton } from "@/components/ui/skeleton"
 import { toast } from "@/components/ui/toast"
 import { usePortals } from "@/hooks/use-portals"
 import { getErrorMessage } from "@/lib/api/error-messages"
+import {
+  stageBadgeConfig,
+  statusBadgeConfig,
+} from "@/lib/components/badge-config"
+import {
+  filterPortals,
+  formatPortalCounts,
+  sortPortals,
+  splitApplications,
+} from "@/lib/domain/portal-list"
 import { safeHttpUrl } from "@/lib/safe-url"
-import { Portal } from "@/types/portal.types"
+import { Portal, PortalApplication } from "@/types/portal.types"
 import { Globe, Plus, SquareArrowOutUpRight } from "lucide-react"
 import Link from "next/link"
-import { useState } from "react"
+import { ReactNode, useState } from "react"
 import PortalDialog from "./portal-dialog"
 
 const LABEL = "font-mono text-xs tracking-wider text-muted-foreground uppercase"
+
+interface ApplicationListProps {
+  applications: PortalApplication[]
+  stateOf: (application: PortalApplication) => ReactNode
+}
+
+const ApplicationList = ({ applications, stateOf }: ApplicationListProps) => (
+  <ul className="flex flex-col">
+    {applications.map((application) => (
+      <li key={application.id}>
+        <Link
+          href={`/job-applications/${application.id}`}
+          className="flex min-h-11 items-center justify-between gap-3 text-sm hover:underline"
+        >
+          <span className="min-w-0 wrap-anywhere">
+            <span className="font-medium">{application.jobTitle}</span>
+            <span className="text-muted-foreground">
+              {" "}
+              · {application.company}
+            </span>
+          </span>
+          <span className="shrink-0 text-xs text-muted-foreground">
+            {stateOf(application)}
+          </span>
+        </Link>
+      </li>
+    ))}
+  </ul>
+)
 
 interface PortalCardProps {
   portal: Portal
@@ -40,6 +80,7 @@ interface PortalCardProps {
 
 const PortalCard = ({ portal, onEdit, onDelete }: PortalCardProps) => {
   const url = safeHttpUrl(portal.url)
+  const { active, closed } = splitApplications(portal)
 
   return (
     <section className="flex min-w-0 flex-col gap-3 border border-border bg-card p-6">
@@ -57,29 +98,28 @@ const PortalCard = ({ portal, onEdit, onDelete }: PortalCardProps) => {
       )}
 
       <div className="flex flex-col gap-1 border-t border-muted pt-3">
-        <h3 className={LABEL}>Postulaciones</h3>
-        {portal.applications.length === 0 ? (
+        <h3 className={LABEL}>{formatPortalCounts(portal)}</h3>
+        {portal.applications.length === 0 && (
           <p className="text-sm text-muted-foreground">
             Aún no sigues ninguna aquí.
           </p>
-        ) : (
-          <ul className="flex flex-col">
-            {portal.applications.map((application) => (
-              <li key={application.id}>
-                <Link
-                  href={`/job-applications/${application.id}`}
-                  className="flex min-h-11 items-center gap-1 text-sm hover:underline"
-                >
-                  <span className="font-medium wrap-anywhere">
-                    {application.jobTitle}
-                  </span>
-                  <span className="wrap-anywhere text-muted-foreground">
-                    · {application.company}
-                  </span>
-                </Link>
-              </li>
-            ))}
-          </ul>
+        )}
+        {active.length > 0 && (
+          <ApplicationList
+            applications={active}
+            stateOf={(a) => stageBadgeConfig[a.stage].label}
+          />
+        )}
+        {closed.length > 0 && (
+          <details>
+            <summary className="flex min-h-11 cursor-pointer items-center text-sm font-medium text-muted-foreground">
+              Ver cerradas ({closed.length})
+            </summary>
+            <ApplicationList
+              applications={closed}
+              stateOf={(a) => statusBadgeConfig[a.status].label}
+            />
+          </details>
         )}
       </div>
 
@@ -88,6 +128,7 @@ const PortalCard = ({ portal, onEdit, onDelete }: PortalCardProps) => {
           <Button
             variant="outline"
             className="h-11 px-4 text-sm"
+            nativeButton={false}
             render={<a href={url} target="_blank" rel="noopener noreferrer" />}
           >
             <SquareArrowOutUpRight /> Abrir portal
@@ -121,6 +162,9 @@ const PortalsView = () => {
   const [isCreating, setIsCreating] = useState(false)
   const [editing, setEditing] = useState<Portal | null>(null)
   const [deleting, setDeleting] = useState<Portal | null>(null)
+  const [search, setSearch] = useState("")
+
+  const visiblePortals = sortPortals(filterPortals(portals, search))
 
   async function confirmDelete(portal: Portal) {
     setDeleting(null)
@@ -191,16 +235,33 @@ const PortalsView = () => {
           </EmptyHeader>
         </Empty>
       ) : (
-        <div className="grid items-stretch gap-4 md:grid-cols-2">
-          {portals.map((portal) => (
-            <PortalCard
-              key={portal.id}
-              portal={portal}
-              onEdit={() => setEditing(portal)}
-              onDelete={() => setDeleting(portal)}
-            />
-          ))}
-        </div>
+        <>
+          <Input
+            type="search"
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
+            aria-label="Buscar portal por nombre"
+            placeholder="Buscar por nombre"
+            autoComplete="off"
+            className="h-11 max-w-sm text-base sm:text-sm md:text-sm"
+          />
+          {visiblePortals.length === 0 ? (
+            <p className="text-sm text-muted-foreground">
+              Ningún portal coincide con tu búsqueda.
+            </p>
+          ) : (
+            <div className="grid items-stretch gap-4 md:grid-cols-2">
+              {visiblePortals.map((portal) => (
+                <PortalCard
+                  key={portal.id}
+                  portal={portal}
+                  onEdit={() => setEditing(portal)}
+                  onDelete={() => setDeleting(portal)}
+                />
+              ))}
+            </div>
+          )}
+        </>
       )}
 
       <PortalDialog
