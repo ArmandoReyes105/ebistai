@@ -45,6 +45,8 @@ const PROBLEM_MESSAGES: Record<string, string> = {
     "Las notas del portal son demasiado largas (máximo 4000 caracteres).",
   portal_url_conflict: "Ya tienes un portal con ese enlace.",
   portal_not_found: "Ese portal ya no existe. Elige otro.",
+  portal_url_has_credentials:
+    "Quita el usuario o la contraseña del enlace del portal.",
 }
 
 export const CONFLICT_MESSAGE = "Algo cambió mientras tanto"
