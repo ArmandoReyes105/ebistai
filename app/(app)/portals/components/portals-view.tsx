@@ -30,12 +30,13 @@ import {
 } from "@/lib/components/badge-config"
 import {
   filterPortals,
-  formatPortalCounts,
+  portalCounts,
   sortPortals,
   splitApplications,
 } from "@/lib/domain/portal-list"
 import { safeHttpUrl } from "@/lib/safe-url"
 import { Portal, PortalApplication } from "@/types/portal.types"
+import { cn } from "cn"
 import { Globe, Plus, SquareArrowOutUpRight } from "lucide-react"
 import Link from "next/link"
 import { ReactNode, useState } from "react"
@@ -81,6 +82,7 @@ interface PortalCardProps {
 const PortalCard = ({ portal, onEdit, onDelete }: PortalCardProps) => {
   const url = safeHttpUrl(portal.url)
   const { active, closed } = splitApplications(portal)
+  const counts = portalCounts(portal)
 
   return (
     <section className="flex min-w-0 flex-col gap-3 border border-border bg-card p-6">
@@ -98,11 +100,29 @@ const PortalCard = ({ portal, onEdit, onDelete }: PortalCardProps) => {
       )}
 
       <div className="flex flex-col gap-1 border-t border-muted pt-3">
-        <h3 className={LABEL}>{formatPortalCounts(portal)}</h3>
-        {portal.applications.length === 0 && (
+        {portal.applications.length === 0 ? (
           <p className="text-sm text-muted-foreground">
             Aún no sigues ninguna aquí.
           </p>
+        ) : (
+          <h3 className="flex items-baseline gap-2">
+            <span
+              className={cn(
+                "flex items-baseline gap-1.5",
+                counts.active === 0 && "text-muted-foreground"
+              )}
+            >
+              <span className="text-3xl leading-none font-semibold tracking-tighter tabular-nums">
+                {counts.active}
+              </span>
+              <span className="text-sm font-semibold">{counts.activeWord}</span>
+            </span>
+            {counts.closed && (
+              <span className="ml-auto text-sm font-normal text-muted-foreground">
+                {counts.closed}
+              </span>
+            )}
+          </h3>
         )}
         {active.length > 0 && (
           <ApplicationList

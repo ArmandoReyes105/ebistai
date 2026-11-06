@@ -10,11 +10,14 @@ export const splitApplications = (portal: Portal) => ({
 const plural = (count: number, word: string) =>
   `${count} ${word}${count === 1 ? "" : "s"}`
 
-export function formatPortalCounts(portal: Portal): string {
-  if (portal.applications.length === 0) return "Sin postulaciones"
-
+export function portalCounts(portal: Portal) {
   const { active, closed } = splitApplications(portal)
-  return `${plural(active.length, "activa")} · ${plural(closed.length, "cerrada")}`
+
+  return {
+    active: active.length,
+    activeWord: active.length === 1 ? "activa" : "activas",
+    closed: closed.length > 0 ? plural(closed.length, "cerrada") : null,
+  }
 }
 
 const hasActive = (portal: Portal) =>
@@ -37,10 +40,26 @@ export function filterPortals(portals: Portal[], search: string): Portal[] {
   )
 }
 
+export const NO_PORTAL = "Sin portal"
+
 // Names are unique per user, so a name identifies one portal.
 export const findPortalByName = (portals: Portal[], name: string) => {
   const term = normalizeCatalogName(name)
   return term
     ? portals.find((portal) => normalizeCatalogName(portal.name) === term)
     : undefined
+}
+
+// A portal the user named like the option wins, so it stays reachable.
+export const portalSearchItems = (portals: Portal[]): string[] => {
+  const names = portals.map((portal) => portal.name)
+  return findPortalByName(portals, NO_PORTAL) ? names : [NO_PORTAL, ...names]
+}
+
+// What a value of the search means: the text to show and the portal to link.
+export function resolvePortalSearch(portals: Portal[], value: string) {
+  const portal = findPortalByName(portals, value)
+  if (portal) return { search: value, portalId: portal.id }
+
+  return { search: value === NO_PORTAL ? "" : value, portalId: "" }
 }

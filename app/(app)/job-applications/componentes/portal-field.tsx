@@ -14,7 +14,11 @@ import { Input } from "@/components/ui/input"
 import { toast } from "@/components/ui/toast"
 import { usePortals } from "@/hooks/use-portals"
 import { getErrorMessage } from "@/lib/api/error-messages"
-import { findPortalByName } from "@/lib/domain/portal-list"
+import {
+  findPortalByName,
+  portalSearchItems,
+  resolvePortalSearch,
+} from "@/lib/domain/portal-list"
 import { portalSchema } from "@/schemas/portal"
 import { JobApplicationFormValues } from "@/schemas/job-application"
 import { Plus, XIcon } from "lucide-react"
@@ -41,7 +45,6 @@ const PortalField = ({ control, current }: PortalFieldProps) => {
   const [url, setUrl] = useState("")
   const [errors, setErrors] = useState<{ name?: string; url?: string }>({})
 
-  const names = portals.map((portal) => portal.name)
   const isUnknown =
     !isLoading &&
     search.trim() !== "" &&
@@ -119,12 +122,13 @@ const PortalField = ({ control, current }: PortalFieldProps) => {
             </div>
 
             <Autocomplete
-              items={names}
+              items={portalSearchItems(portals)}
               value={search}
               openOnInputClick
               onValueChange={(value: string) => {
-                setSearch(value)
-                field.onChange(findPortalByName(portals, value)?.id ?? "")
+                const resolved = resolvePortalSearch(portals, value)
+                setSearch(resolved.search)
+                field.onChange(resolved.portalId)
               }}
             >
               <AutocompleteInput

@@ -2,7 +2,10 @@ import { describe, expect, it } from "vitest"
 import {
   filterPortals,
   findPortalByName,
-  formatPortalCounts,
+  NO_PORTAL,
+  portalCounts,
+  portalSearchItems,
+  resolvePortalSearch,
   sortPortals,
   splitApplications,
 } from "@/lib/domain/portal-list"
@@ -44,23 +47,27 @@ describe("splitApplications", () => {
   })
 })
 
-describe("formatPortalCounts", () => {
-  it("shows both counts", () => {
-    expect(
-      formatPortalCounts(portal("a", [Status.Active, Status.Rejected]))
-    ).toBe("1 activa · 1 cerrada")
+describe("portalCounts", () => {
+  it("separates the active count from the closed text", () => {
+    expect(portalCounts(portal("a", [Status.Active, Status.Rejected]))).toEqual(
+      { active: 1, activeWord: "activa", closed: "1 cerrada" }
+    )
   })
 
   it("keeps the zero, so a dead portal reads as one", () => {
     expect(
-      formatPortalCounts(
+      portalCounts(
         portal("a", [Status.Rejected, Status.Ignored, Status.Withdrawn])
       )
-    ).toBe("0 activas · 3 cerradas")
+    ).toEqual({ active: 0, activeWord: "activas", closed: "3 cerradas" })
   })
 
-  it("explains a portal without applications", () => {
-    expect(formatPortalCounts(portal("a"))).toBe("Sin postulaciones")
+  it("leaves the closed text out when nothing closed", () => {
+    expect(portalCounts(portal("a", [Status.Active, Status.Active]))).toEqual({
+      active: 2,
+      activeWord: "activas",
+      closed: null,
+    })
   })
 })
 
@@ -119,5 +126,55 @@ describe("findPortalByName", () => {
 
   it("finds nothing for a blank name", () => {
     expect(findPortalByName(portals, "  ")).toBeUndefined()
+  })
+})
+
+describe("portalSearchItems", () => {
+  it("offers no portal first, then the portals", () => {
+    expect(portalSearchItems([portal("Acme"), portal("Zeta")])).toEqual([
+      NO_PORTAL,
+      "Acme",
+      "Zeta",
+    ])
+  })
+
+  it("still offers it when there are no portals", () => {
+    expect(portalSearchItems([])).toEqual([NO_PORTAL])
+  })
+
+  it("does not repeat a portal the user named the same", () => {
+    expect(portalSearchItems([portal(NO_PORTAL)])).toEqual([NO_PORTAL])
+  })
+})
+
+describe("resolvePortalSearch", () => {
+  const portals = [portal("Acme")]
+
+  it("clears the search and the link when choosing no portal", () => {
+    expect(resolvePortalSearch(portals, NO_PORTAL)).toEqual({
+      search: "",
+      portalId: "",
+    })
+  })
+
+  it("links the portal with that name", () => {
+    expect(resolvePortalSearch(portals, "Acme")).toEqual({
+      search: "Acme",
+      portalId: "Acme",
+    })
+  })
+
+  it("keeps the text but links nothing while it matches no portal", () => {
+    expect(resolvePortalSearch(portals, "Ac")).toEqual({
+      search: "Ac",
+      portalId: "",
+    })
+  })
+
+  it("links a portal the user named like the option", () => {
+    expect(resolvePortalSearch([portal(NO_PORTAL)], NO_PORTAL)).toEqual({
+      search: NO_PORTAL,
+      portalId: NO_PORTAL,
+    })
   })
 })
