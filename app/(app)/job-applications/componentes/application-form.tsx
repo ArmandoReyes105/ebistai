@@ -49,6 +49,7 @@ import {
 } from "./application-form-classes"
 import ApplicationFormPreview from "./application-form-preview"
 import CatalogAutocompleteField from "./catalog-autocomplete-field"
+import PortalField from "./portal-field"
 
 const MODE_ORDER = [WorkMode.Remote, WorkMode.Hybrid, WorkMode.OnSite]
 
@@ -64,6 +65,7 @@ const EMPTY_VALUES: Partial<JobApplicationFormValues> = {
   mode: undefined,
   dateApplied: "",
   notes: "",
+  portalId: "",
 }
 
 const valuesOf = (
@@ -78,6 +80,7 @@ const valuesOf = (
     ? new Date(application.dateApplied)
     : new Date(),
   notes: application.notes ?? "",
+  portalId: application.portalId ?? "",
 })
 
 interface ApplicationFormProps {
@@ -118,6 +121,7 @@ const ApplicationForm = ({ application, onSuccess }: ApplicationFormProps) => {
         applicationSource: values.applicationSource,
         mode: Number(values.mode) as WorkMode,
         notes: values.notes || undefined,
+        portalId: values.portalId || undefined,
         dateApplied: values.dateApplied
           ? new Date(values.dateApplied)
           : new Date(),
@@ -414,7 +418,16 @@ const ApplicationForm = ({ application, onSuccess }: ApplicationFormProps) => {
             </section>
           </div>
 
-          <div className="px-4 pb-4 sm:px-6 sm:pb-6 lg:px-8">
+          <div className="flex flex-col gap-4 px-4 pb-4 sm:px-6 sm:pb-6 lg:px-8">
+            <PortalField
+              control={form.control}
+              current={
+                application?.portalId && application.portalName
+                  ? { id: application.portalId, name: application.portalName }
+                  : undefined
+              }
+            />
+
             <Controller
               name="notes"
               control={form.control}

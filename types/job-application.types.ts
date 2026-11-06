@@ -12,6 +12,9 @@ export interface JobApplication {
     notes: string;
     dateApplied: Date;
     lastProgressAt?: Date;
+    portalId?: string | null;
+    portalName?: string | null;
+    portalUrl?: string | null;
 }
 
 export interface CreateJobApplicationRequest {
@@ -22,6 +25,7 @@ export interface CreateJobApplicationRequest {
     mode: WorkMode;
     notes?: string;
     dateApplied?: Date;
+    portalId?: string;
 }
 
 // Stage and status are changed through their own endpoints, not via PUT.
@@ -33,6 +37,7 @@ export interface UpdateJobApplicationRequest {
     mode: WorkMode;
     notes?: string;
     dateApplied?: Date;
+    portalId?: string;
 }
 
 // `occurredAt` is optional: the server uses "now" when omitted.

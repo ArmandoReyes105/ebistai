@@ -33,6 +33,18 @@ const PROBLEM_MESSAGES: Record<string, string> = {
     "El nombre de la fuente es demasiado largo (máximo 150 caracteres).",
   catalog_name_conflict:
     "Alguien registró ese nombre justo al mismo tiempo. ¿Le damos otra vez?",
+  portal_name_required: "Escribe el nombre del portal.",
+  portal_name_too_long:
+    "El nombre del portal es demasiado largo (máximo 200 caracteres).",
+  portal_url_required: "Escribe el enlace del portal.",
+  portal_url_too_long:
+    "El enlace del portal es demasiado largo (máximo 500 caracteres).",
+  invalid_portal_url:
+    "El enlace del portal debe empezar con http:// o https://.",
+  portal_notes_too_long:
+    "Las notas del portal son demasiado largas (máximo 4000 caracteres).",
+  portal_url_conflict: "Ya tienes un portal con ese enlace.",
+  portal_not_found: "Ese portal ya no existe. Elige otro.",
 }
 
 export const CONFLICT_MESSAGE = "Algo cambió mientras tanto"

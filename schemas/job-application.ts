@@ -35,6 +35,7 @@ export const jobApplicationSchema = z.object({
       .max(NOTES_MAX_LENGTH, `Máximo ${NOTES_MAX_LENGTH} caracteres`)
       .optional()
       .or(z.literal("")),
+    portalId: z.string().optional(),
 });
 
 // Stage and status are no longer editable here; they have their own actions.

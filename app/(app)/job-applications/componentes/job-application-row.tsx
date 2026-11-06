@@ -83,6 +83,7 @@ const JobApplicationRow = ({
 
   const closed = isTerminal(jobApplication)
   const postingUrl = safeHttpUrl(jobApplication.jobPostingUrl)
+  const portalUrl = safeHttpUrl(jobApplication.portalUrl)
   const appliedAt = new Date(jobApplication.dateApplied)
   const progressAt = jobApplication.lastProgressAt
     ? new Date(jobApplication.lastProgressAt)
@@ -232,6 +233,19 @@ const JobApplicationRow = ({
                     }
                   >
                     <SquareArrowOutUpRight /> Ver vacante
+                  </DropdownMenuItem>
+                )}
+                {portalUrl && (
+                  <DropdownMenuItem
+                    render={
+                      <a
+                        href={portalUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      />
+                    }
+                  >
+                    <SquareArrowOutUpRight /> Abrir portal
                   </DropdownMenuItem>
                 )}
                 {/* Kept in the menu, not inline, so reviving is deliberate. */}
