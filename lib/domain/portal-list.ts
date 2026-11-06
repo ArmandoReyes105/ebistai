@@ -14,9 +14,9 @@ export function portalCounts(portal: Portal) {
   const { active, closed } = splitApplications(portal)
 
   return {
-    active: active.length,
-    activeWord: active.length === 1 ? "activa" : "activas",
-    closed: closed.length > 0 ? plural(closed.length, "cerrada") : null,
+    active: plural(active.length, "activa"),
+    closed: plural(closed.length, "cerrada"),
+    hasActive: active.length > 0,
   }
 }
 

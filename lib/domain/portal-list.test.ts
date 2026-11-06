@@ -48,9 +48,9 @@ describe("splitApplications", () => {
 })
 
 describe("portalCounts", () => {
-  it("separates the active count from the closed text", () => {
+  it("shows both counts", () => {
     expect(portalCounts(portal("a", [Status.Active, Status.Rejected]))).toEqual(
-      { active: 1, activeWord: "activa", closed: "1 cerrada" }
+      { active: "1 activa", closed: "1 cerrada", hasActive: true }
     )
   })
 
@@ -59,14 +59,14 @@ describe("portalCounts", () => {
       portalCounts(
         portal("a", [Status.Rejected, Status.Ignored, Status.Withdrawn])
       )
-    ).toEqual({ active: 0, activeWord: "activas", closed: "3 cerradas" })
+    ).toEqual({ active: "0 activas", closed: "3 cerradas", hasActive: false })
   })
 
-  it("leaves the closed text out when nothing closed", () => {
+  it("shows the closed zero too", () => {
     expect(portalCounts(portal("a", [Status.Active, Status.Active]))).toEqual({
-      active: 2,
-      activeWord: "activas",
-      closed: null,
+      active: "2 activas",
+      closed: "0 cerradas",
+      hasActive: true,
     })
   })
 })

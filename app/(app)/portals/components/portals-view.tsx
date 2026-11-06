@@ -100,29 +100,26 @@ const PortalCard = ({ portal, onEdit, onDelete }: PortalCardProps) => {
       )}
 
       <div className="flex flex-col gap-1 border-t border-muted pt-3">
-        {portal.applications.length === 0 ? (
+        <h3 className={LABEL}>
+          {portal.applications.length === 0 ? (
+            "Sin postulaciones"
+          ) : (
+            <>
+              <span
+                className={cn(
+                  counts.hasActive && "font-semibold text-foreground"
+                )}
+              >
+                {counts.active}
+              </span>
+              {` · ${counts.closed}`}
+            </>
+          )}
+        </h3>
+        {portal.applications.length === 0 && (
           <p className="text-sm text-muted-foreground">
             Aún no sigues ninguna aquí.
           </p>
-        ) : (
-          <h3 className="flex items-baseline gap-2">
-            <span
-              className={cn(
-                "flex items-baseline gap-1.5",
-                counts.active === 0 && "text-muted-foreground"
-              )}
-            >
-              <span className="text-3xl leading-none font-semibold tracking-tighter tabular-nums">
-                {counts.active}
-              </span>
-              <span className="text-sm font-semibold">{counts.activeWord}</span>
-            </span>
-            {counts.closed && (
-              <span className="ml-auto text-sm font-normal text-muted-foreground">
-                {counts.closed}
-              </span>
-            )}
-          </h3>
         )}
         {active.length > 0 && (
           <ApplicationList
