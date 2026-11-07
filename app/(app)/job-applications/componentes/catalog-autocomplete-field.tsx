@@ -21,10 +21,7 @@ import { isNewCatalogName } from "@/lib/domain/catalog-name"
 import { JobApplicationFormValues } from "@/schemas/job-application"
 import { useState } from "react"
 import { Control, Controller } from "react-hook-form"
-import {
-  FORM_CONTROL_CLASS,
-  FORM_LABEL_CLASS,
-} from "./application-form-classes"
+import { FORM_CONTROL_CLASS, FORM_LABEL_CLASS } from "@/components/form-classes"
 
 interface CatalogAutocompleteFieldProps {
   control: Control<JobApplicationFormValues>
@@ -34,8 +31,7 @@ interface CatalogAutocompleteFieldProps {
   placeholder: string
 }
 
-const HINT =
-  "No está en tus sugerencias; la guardaremos como nueva."
+const HINT = "No está en tus sugerencias; la guardaremos como nueva."
 
 interface FieldBodyProps {
   value: string

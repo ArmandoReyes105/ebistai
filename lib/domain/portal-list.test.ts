@@ -4,7 +4,9 @@ import {
   findPortalByName,
   NO_PORTAL,
   portalCounts,
+  portalHost,
   portalSearchItems,
+  portalTags,
   resolvePortalSearch,
   sortPortals,
   splitApplications,
@@ -176,5 +178,42 @@ describe("resolvePortalSearch", () => {
       search: NO_PORTAL,
       portalId: NO_PORTAL,
     })
+  })
+})
+
+describe("portalHost", () => {
+  it("keeps only the site of a full link", () => {
+    expect(portalHost("https://empleos.acme.example/vacantes?id=1#top")).toBe(
+      "empleos.acme.example"
+    )
+  })
+
+  it("accepts a half typed link", () => {
+    expect(portalHost("  HTTP://acme.example")).toBe("acme.example")
+    expect(portalHost("acme.exa")).toBe("acme.exa")
+  })
+
+  it("never shows access data typed in the link", () => {
+    expect(portalHost("https://ana:secreta@acme.example/login")).toBe(
+      "acme.example"
+    )
+  })
+
+  it("is empty without a link", () => {
+    expect(portalHost("   ")).toBe("")
+  })
+})
+
+describe("portalTags", () => {
+  it("shows both counts of a portal in use", () => {
+    expect(portalTags(portal("a", [Status.Active, Status.Rejected]))).toEqual([
+      "1 activa",
+      "1 cerrada",
+    ])
+  })
+
+  it("says there is nothing yet for a new or unused portal", () => {
+    expect(portalTags()).toEqual(["Sin postulaciones"])
+    expect(portalTags(portal("a"))).toEqual(["Sin postulaciones"])
   })
 })

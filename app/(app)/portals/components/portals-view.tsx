@@ -1,15 +1,5 @@
 "use client"
 
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog"
 import { Button } from "@/components/ui/button"
 import {
   Empty,
@@ -40,6 +30,7 @@ import { cn } from "cn"
 import { Globe, Plus, SquareArrowOutUpRight } from "lucide-react"
 import Link from "next/link"
 import { ReactNode, useState } from "react"
+import DeletePortalDialog from "./delete-portal-dialog"
 import PortalDialog from "./portal-dialog"
 
 const LABEL = "font-mono text-xs tracking-wider text-muted-foreground uppercase"
@@ -297,33 +288,11 @@ const PortalsView = () => {
         onSave={(data) => updatePortal(editing!.id, data)}
       />
 
-      <AlertDialog
-        open={deleting !== null}
-        onOpenChange={(open) => {
-          if (!open) setDeleting(null)
-        }}
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>¿Seguro que quieres eliminarlo?</AlertDialogTitle>
-            <AlertDialogDescription>
-              Vamos a borrar <span className="font-bold">{deleting?.name}</span>
-              . Tus postulaciones no se borran, solo se quedan sin portal.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Mejor no</AlertDialogCancel>
-            <AlertDialogAction
-              variant="destructive"
-              onClick={() => {
-                if (deleting) void confirmDelete(deleting)
-              }}
-            >
-              Sí, eliminar
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <DeletePortalDialog
+        portal={deleting}
+        onCancel={() => setDeleting(null)}
+        onConfirm={(portal) => void confirmDelete(portal)}
+      />
     </>
   )
 }

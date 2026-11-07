@@ -8,11 +8,7 @@ import {
   DialogDescription,
   DialogTitle,
 } from "@/components/ui/dialog"
-import {
-  Field,
-  FieldError,
-  FieldLabel,
-} from "@/components/ui/field"
+import { Field, FieldError, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import {
   Popover,
@@ -46,7 +42,7 @@ import {
   FORM_CAPTION_CLASS,
   FORM_CONTROL_CLASS,
   FORM_LABEL_CLASS,
-} from "./application-form-classes"
+} from "@/components/form-classes"
 import ApplicationFormPreview from "./application-form-preview"
 import CatalogAutocompleteField from "./catalog-autocomplete-field"
 import PortalField from "./portal-field"

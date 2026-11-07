@@ -16,6 +16,7 @@ import { usePortals } from "@/hooks/use-portals"
 import { getErrorMessage } from "@/lib/api/error-messages"
 import {
   findPortalByName,
+  PORTAL_ACCESS_WARNING,
   portalSearchItems,
   resolvePortalSearch,
 } from "@/lib/domain/portal-list"
@@ -28,7 +29,7 @@ import {
   FORM_CAPTION_CLASS,
   FORM_CONTROL_CLASS,
   FORM_LABEL_CLASS,
-} from "./application-form-classes"
+} from "@/components/form-classes"
 
 interface PortalFieldProps {
   control: Control<JobApplicationFormValues>
@@ -225,8 +226,7 @@ const PortalField = ({ control, current }: PortalFieldProps) => {
                 </div>
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <p className="text-xs text-pretty text-muted-foreground">
-                    Solo guardamos cómo llegar al sitio, nunca tus datos de
-                    acceso.
+                    {PORTAL_ACCESS_WARNING}
                   </p>
                   <Button
                     type="button"

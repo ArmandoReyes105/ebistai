@@ -2,6 +2,10 @@ import { normalizeCatalogName } from "@/lib/domain/catalog-name"
 import { Status } from "@/types/enums"
 import { Portal } from "@/types/portal.types"
 
+// Shown wherever a portal is saved, before the user types anything sensitive.
+export const PORTAL_ACCESS_WARNING =
+  "Por seguridad, no escribas ni pegues tus datos de acceso. Guarda solo el portal."
+
 export const splitApplications = (portal: Portal) => ({
   active: portal.applications.filter((a) => a.status === Status.Active),
   closed: portal.applications.filter((a) => a.status !== Status.Active),
@@ -19,6 +23,23 @@ export function portalCounts(portal: Portal) {
     hasActive: active.length > 0,
   }
 }
+
+// The tags of the preview band; a new portal has no applications yet.
+export function portalTags(portal?: Portal): string[] {
+  if (!portal || portal.applications.length === 0) return ["Sin postulaciones"]
+
+  const { active, closed } = portalCounts(portal)
+  return [active, closed]
+}
+
+// The site of a link, even half typed. Best effort: it hides a "user:pass@"
+// prefix in the preview; the API is what rejects links with credentials.
+export const portalHost = (url: string): string =>
+  url
+    .trim()
+    .replace(/^[a-z][a-z0-9+.-]*:\/\//i, "")
+    .replace(/[/?#].*$/, "")
+    .replace(/^.*@/, "")
 
 const hasActive = (portal: Portal) =>
   splitApplications(portal).active.length > 0
