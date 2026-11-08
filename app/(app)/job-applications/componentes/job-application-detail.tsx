@@ -8,6 +8,8 @@ import { useState } from "react"
 import ApplicationActionsCard from "./application-actions-card"
 import ApplicationDetailHeader from "./application-detail-header"
 import ApplicationInfoCard from "./application-info-card"
+import ApplicationNotesCard from "./application-notes-card"
+import ApplicationPortalTile from "./application-portal-tile"
 import ApplicationProgressCard from "./application-progress-card"
 import ApplicationTaiTile from "./application-tai-tile"
 import ApplicationTimeline from "./application-timeline"
@@ -109,9 +111,11 @@ const JobApplicationDetail = ({ id }: JobApplicationDetailProps) => {
         onDelete={() => setIsDeleteOpen(true)}
       />
 
-      {/* Row 1: progress (3/4) and the Tai tile (1/4). Row 2: history on the
-          left (2/3), actions over details on the right (1/3). Below lg it
-          stacks in DOM order: progress, Tai, actions, details, history. */}
+      {/* Row 1: progress (3/4) and the Tai tile (1/4). Row 2: history over
+          notes on the left (2/3); actions, portal and details on the right
+          (1/3). Notes live on the wide side because they grow without limit.
+          Below lg it stacks in DOM order: progress, Tai, actions, portal,
+          details, history, notes. */}
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-4">
         <div className="lg:col-span-3">
           <ApplicationProgressCard
@@ -134,19 +138,24 @@ const JobApplicationDetail = ({ id }: JobApplicationDetailProps) => {
             onStatusChange={(status) => changeStatus(application.id, status)}
             onRevive={() => revive(application.id)}
           />
+          <ApplicationPortalTile application={application} />
           <ApplicationInfoCard
             application={application}
             onEdit={() => setIsEditOpen(true)}
           />
         </div>
 
-        <div className="lg:col-span-2 lg:col-start-1 lg:row-start-1">
+        <div className="flex flex-col gap-4 lg:col-span-2 lg:col-start-1 lg:row-start-1">
           <ApplicationTimeline
             events={events}
             status={application.status}
             stage={application.stage}
             onUpdateDate={updateEventDate}
             onUndo={(eventId) => undoEvent(application.id, eventId)}
+          />
+          <ApplicationNotesCard
+            notes={application.notes}
+            onEdit={() => setIsEditOpen(true)}
           />
         </div>
       </div>
